@@ -1,9 +1,9 @@
 flask
 flask-classy
 flask-sqlalchemy
-pymysql
 flask-script
 flask-migrate
 flask-bootstrap
 flask-login
 flask-mail
+pymysql
