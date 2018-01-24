@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_classy import FlaskView
 
 from config import config
@@ -13,6 +13,8 @@ def create_app(config_name='production'):
     config_extensions(app)
     # 配置View
     configure_views(app)
+    # 配置错误处理
+    # configure_errorhandler(app)
     return app
 
 
@@ -22,3 +24,14 @@ def configure_views(flask_app):
     for view in locals().values():
         if type(view) == type and issubclass(view, FlaskView):
             view.register(flask_app)
+
+
+# 错误处理
+def configure_errorhandler(app):
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('errors/404.html')
+
+    @app.errorhandler(500)
+    def page_not_found(e):
+        return render_template('errors/500.html')
