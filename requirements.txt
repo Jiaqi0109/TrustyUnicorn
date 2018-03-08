@@ -6,4 +6,5 @@ flask-migrate
 flask-bootstrap
 flask-login
 flask-mail
+flask-wtf
 pymysql

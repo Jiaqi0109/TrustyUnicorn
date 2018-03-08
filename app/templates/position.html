@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    职位页
+{% endblock %}
+
+{% block content %}
+    共有{{ num }}个
+    <br>
+    {% for position in positions %}
+        <hr>
+        <ul>
+            <li>{{ position.name }}</li>
+            <li>{{ position.salary }}</li>
+            <li>{{ position.city }}</li>
+            <li>{{ position.publish_time }}</li>
+            <li>{{ position.c_name }}</li>
+            <li>{{ position.c_full_name }}</li>
+        </ul>
+    {% endfor %}
+{% endblock %}
