@@ -7,15 +7,32 @@
 {% block content %}
     共有{{ num }}个
     <br>
+    <img src="/static/img/{{ city_png }}.png" alt="WORRY!">
+    <img src="/static/img/{{ salary_png }}.png" alt="WORRY!">
+    <img src="/static/img/{{ education_png }}.png" alt="WORRY!">
+    <img src="/static/img/{{ workyear_png }}.png" alt="WORRY!">
+    <div class="col-lg-6">
+        <div class="input-group input-group-lg col-lg-12">
+            <input name="keyword" type="text" class="form-control" placeholder="输入城市继续分析......" value="">
+            <input name="keyword" type="text" class="form-control" placeholder="输入薪资继续分析......" value="">
+            <input name="keyword" type="text" class="form-control" placeholder="输入学历继续分析......" value="">
+        </div>
+        <div>
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="submit">Search</button>
+        </span></div>
+    </div>
+    <div>
     {% for position in positions %}
         <hr>
         <ul>
-            <li>{{ position.name }}</li>
+            <li><a href="{{ url_for('DetailView:index', id=position.pid) }}">{{ position.name }}</a></li>
             <li>{{ position.salary }}</li>
             <li>{{ position.city }}</li>
             <li>{{ position.publish_time }}</li>
-            <li>{{ position.c_name }}</li>
+            <li><a href="https://www.lagou.com/gongsi/{{ position.cid }}.html">{{ position.c_name }}</a></li>
             <li>{{ position.c_full_name }}</li>
         </ul>
     {% endfor %}
+    </div>
 {% endblock %}

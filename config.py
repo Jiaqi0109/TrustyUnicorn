@@ -2,6 +2,10 @@ import os
 
 
 class Config:
+
+    # 密钥，提交表单需要
+    SECRET_KEY = '123456'
+
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
@@ -11,7 +15,7 @@ class Config:
 
 
 class DevelopmentConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:jiaqi0109@localhost/lagou'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:jiaqi0109@localhost/lagou0323'
     DEBUG = True
 
 

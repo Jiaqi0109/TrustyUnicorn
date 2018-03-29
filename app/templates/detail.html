@@ -3,3 +3,14 @@
 {% block title %}
     详情页
 {% endblock %}
+
+
+{% block content %}
+    <h2>{{ position.name }}</h2>
+    <li>薪资：{{ position.salary }}</li>
+    <li>城市：{{ position.city }}</li>
+    <li>工作经验：{{ detail.workyear }}</li>
+    <li>教育背景：{{ detail.education }}</li>
+    <li>职位诱惑：{{ detail.temptation }}</li>
+    <li>职位描述：{{ detail.description }}</li>
+{% endblock %}

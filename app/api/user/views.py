@@ -3,7 +3,6 @@ from flask_classy import FlaskView
 
 
 class UserView(FlaskView):
-    route_base = '/'
 
     # 根路由
     def index(self):

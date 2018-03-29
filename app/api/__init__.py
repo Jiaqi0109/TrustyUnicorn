@@ -4,3 +4,4 @@ from .user.views import UserView
 from .company import CompanyView
 from .detail import DetailView
 from .position import PositionView
+from .search import SearchView
