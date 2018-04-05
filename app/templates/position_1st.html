@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    职位页
+{% endblock %}
+
+{% block content %}
+    共有{{ num }}个
+    <br>
+    <img src="/static/img/{{ city_png }}.png" alt="WORRY!">
+    <img src="/static/img/{{ salary_png }}.png" alt="WORRY!">
+    <img src="/static/img/{{ education_png }}.png" alt="WORRY!">
+    <img src="/static/img/{{ workyear_png }}.png" alt="WORRY!">
+    <form action="{{ url_for('PositionView:select_city') }}" method="post" class="col-lg-6">
+        <div class="input-group input-group-lg col-lg-12">
+            <input name="city" type="text" class="form-control" placeholder="输入城市继续分析......" value="">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="submit">Search</button>
+            </span>
+        </div>
+    </form>
+{#    <div>#}
+{#        {% for position in positions %}#}
+{#            <hr>#}
+{#            <ul>#}
+{#                <li><a href="{{ url_for('DetailView:index', id=position.pid) }}">{{ position.name }}</a></li>#}
+{#                <li>{{ position.salary }}</li>#}
+{#                <li>{{ position.city }}</li>#}
+{#                <li>{{ position.publish_time }}</li>#}
+{#                <li><a href="https://www.lagou.com/gongsi/{{ position.cid }}.html">{{ position.c_name }}</a></li>#}
+{#                <li>{{ position.c_full_name }}</li>#}
+{#            </ul>#}
+{#        {% endfor %}#}
+{#    </div>#}
+
+    <div id="main" style="width: 900px;height:500px;"></div>
+
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: 'ECharts 入门示例'
+            },
+            tooltip: {},
+            legend: {
+                data:['销量']
+            },
+            xAxis: {
+                data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+            },
+            yAxis: {},
+            series: [{
+                name: '销量',
+                type: 'bar',
+                data: [5, 20, 36, 10, 10, 20]
+            }]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+{% endblock %}

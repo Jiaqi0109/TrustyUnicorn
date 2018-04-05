@@ -15,9 +15,11 @@ import matplotlib as mpl
 from app.helpers import zh_font
 zh_hans = zh_font()
 
+position_query = None
+
 class PositionView(FlaskView):
 
-    # 根路由
+    # 第一个页面
     @route('/', methods=['POST'])
     def index(self):
         salary = []
@@ -27,11 +29,16 @@ class PositionView(FlaskView):
 
         if keyword == 'C++' or keyword == 'C#':
             d_keyword = '\\'.join(keyword)
-            positions = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(d_keyword))).order_by('publish_time').all()[::-1]
+            query = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(d_keyword)))
         else:
-            positions = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(keyword))).order_by('publish_time').all()[::-1]
+            query = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(keyword)))
             # positions = Position.query.limit(2000).all()
             # positions = Position.query.filter_by(city=city).all()
+
+        # 全局变量，逐步筛选职位
+        global position_query
+        position_query = query
+        positions = query.order_by('publish_time').all()[::-1]
 
         num = len(positions)
 
@@ -52,7 +59,20 @@ class PositionView(FlaskView):
         education_png = self.education_bar(education)
         workyear_png = self.workyear_bar(workyear)
 
-        return render_template('position.html', num=num, keyword=keyword, workyear_png=workyear_png, education_png=education_png, city_png=city_png, salary_png=salary_png, positions=positions[:20])
+        return render_template('position_1st.html', num=num, keyword=keyword, workyear_png=workyear_png, education_png=education_png, city_png=city_png, salary_png=salary_png, positions=positions[:20])
+
+
+    @route('/city/', methods=['POST'])
+    def select_city(self):
+        global position_query
+
+        city = request.form['city']
+        query = position_query.filter_by(city=city)
+        position_query = query
+        positions = query.order_by('publish_time').all()[::-1]
+        num = len(positions)
+        return render_template('position_2nd.html', num=num, positions=positions[:50])
+
 
     # 城市分布饼图
     def city_pie(self, cities, keyword, num):
