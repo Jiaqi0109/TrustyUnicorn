@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <form action="{{ url_for('PositionView:index') }}" method="POST" class="col-lg-6"
+    <form action="{{ url_for('PositionView:city') }}" method="POST" class="col-lg-6"
           style="position: absolute;top: 40%;left: 50%;transform: translateY(-50%);transform: translateX(-50%);">
         <div class="input-group input-group-lg col-lg-12">
             <input name="keyword" type="text" class="form-control" placeholder="请输入职位关键字......" value="">

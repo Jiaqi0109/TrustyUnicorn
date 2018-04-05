@@ -6,18 +6,14 @@
 
 {% block content %}
     共有{{ num }}个
-    <br>
-    <img src="/static/img/{{ salary_png }}.png" alt="WORRY!">
-    <img src="/static/img/{{ education_png }}.png" alt="WORRY!">
-    <img src="/static/img/{{ workyear_png }}.png" alt="WORRY!">
-    <form action="{{ url_for('PositionView:select_city') }}" method="post" class="col-lg-6">
-        <div class="input-group input-group-lg col-lg-12">
-            <input name="city" type="text" class="form-control" placeholder="输入城市继续分析......" value="">
-            <span class="input-group-btn">
-                <button class="btn btn-default" type="submit">Search</button>
-            </span>
-        </div>
-    </form>
+{#    <form action="{{ url_for('PositionView:select_city') }}" method="post" class="col-lg-6">#}
+{#        <div class="input-group input-group-lg col-lg-12">#}
+{#            <input name="city" type="text" class="form-control" placeholder="输入城市继续分析......" value="">#}
+{#            <span class="input-group-btn">#}
+{#                <button class="btn btn-default" type="submit">Search</button>#}
+{#            </span>#}
+{#        </div>#}
+{#    </form>#}
         <div>
             {% for position in positions %}
                 <hr>
