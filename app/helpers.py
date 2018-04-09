@@ -6,3 +6,4 @@ def zh_font():
     #解决负号'-'显示为方块的问题
     matplotlib.rcParams['axes.unicode_minus']=False
     return myfont
+

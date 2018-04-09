@@ -1,0 +1,31 @@
+{% extends 'register.html' %}
+
+
+{% block content %}
+    <div id="page-wrapper" style="height: 780px;">
+        <div class="main-page">
+            <div id="city" style="width: 40%;height:300px;position: absolute;top: 250px; left: 25%;">
+                <form>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">管理员名称</label>
+                        <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Admin name">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">密 码</label>
+                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"> 自定义关键词
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputFile">选择关键词文件（若不选择则为默认关键词）</label>
+                        <input type="file" id="exampleInputFile">
+                    </div>
+                    <button type="submit" class="btn btn-default">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

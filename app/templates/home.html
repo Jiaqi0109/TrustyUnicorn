@@ -1,0 +1,192 @@
+{% extends 'main.html' %}
+
+
+{% block content %}
+    <h3><i class="fa fa-angle-right"></i> 目前IT相关职业的分布情况</h3>
+    <div id="main" style="width: 100%;height:1000px;"></div>
+    <div id="city" style="width: 100%;height:600px;"></div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        // 动态选择标签
+        $('ul#nav-accordion li a').removeClass();
+        $('ul#nav-accordion li:first a').addClass("active");
+    </script>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: 'IT职业各职位分布情况',
+                subtext: 'data from lagou.com',
+                sublink: 'http://www.lagou.com',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            legend: {
+                data: ['职位数量'],
+                left: 'left'
+            },
+            xAxis: {
+                position: 'top',
+                type: 'value',
+                boundaryGap: [0, 0.01]
+            },
+            yAxis: {
+                type: 'category',
+                data: []
+            },
+            series: [
+                {
+                    name: '职位数量',
+                    type: 'bar',
+                    data: []
+                }
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        myChart.showLoading();
+        var names = [];
+        var nums = [];
+        $.ajax({
+            type: "get",
+            url: "/position_json/",
+            dataType: "json",
+            success: function (result) {
+                if (result) {
+                    for (var i = 0; i < result["data"].length; i++) {
+                        key = (result["data"][i]["name"]);
+                        num = (result["data"][i]["value"]);
+                        names.push(key);
+                        nums.push(num);
+                    }
+                    myChart.hideLoading();
+                    myChart.setOption({
+                        yAxis:{
+                            data: names
+                        },
+                        series: {
+                            data: nums
+                        }
+                    });
+                }
+            },
+            error: function (errorMsg) {
+                alert("数据获取失败，请与管理员联系!");
+                myChart.hideLoading();
+            }
+        });
+
+        function httpPost(URL, PARAMS) {
+            var temp = document.createElement("form");
+            temp.action = URL;
+            temp.method = "post";
+            temp.style.display = "none";
+
+            for (var x in PARAMS) {
+                var opt = document.createElement("textarea");
+                opt.name = x;
+                opt.value = PARAMS[x];
+                temp.appendChild(opt);
+            }
+
+            document.body.appendChild(temp);
+            temp.submit();
+
+            return temp;
+        }
+
+        myChart.on('click', function (param) {
+            {#alert(param.name)#}
+            var params = {
+                "keyword": param.name
+            };
+            httpPost('/general/get/', params)
+        });
+
+    </script>
+
+
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var cChart = echarts.init(document.getElementById('city'));
+
+        // 指定图表的配置项和数据
+        var option = {
+
+            title: {
+                text: '各城市职位分布图',
+                subtext: 'data from lagou.com',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                left: 'left',
+                orient: 'vertical',
+                data: []
+            },
+            series: [{
+                name: '数量（占比）',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '60%'],
+                data: [],
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }]
+        };
+        cChart.setOption(option);
+
+        {# 异步加载数据 #}
+        cChart.showLoading();
+        var names = [];
+        var nums = [];
+        $.ajax({
+            type: "get",
+            url: "/city_json/",
+            dataType: "json",
+            success: function (result) {
+                if (result) {
+                    for (var i = 0; i < result["data"].length; i++) {
+                        key = (result["data"][i]["name"]);
+                        num = (result["data"][i]["value"]);
+                        names.push(key);
+                        nums.push(num);
+                    }
+                    cChart.hideLoading();
+                    cChart.setOption({
+                        series: {
+                            data: result["data"]
+                        },
+                        legend: {
+                            data: names
+                        }
+                    });
+                }
+            },
+            error: function (errorMsg) {
+                alert("数据获取失败，请与管理员联系!");
+                cChart.hideLoading();
+            }
+        });
+
+    </script>
+{% endblock %}
