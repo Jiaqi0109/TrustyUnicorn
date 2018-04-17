@@ -1,0 +1,65 @@
+{% extends 'main.html' %}
+
+
+{% block content %}
+
+    <h3><i class="fa fa-angle-right"></i> 推荐职位</h3>
+
+    <p>根据您的选择(<span class="text-danger">Python 上海 1-3年 本科 10K-20K 未指定公司</span>)以及技能关键词（<span class="text-primary">Flask 后端 全栈 SQL</span>）推荐如下职位：</p>
+
+    <div class="row mt">
+        <div class="col-lg-12">
+
+            <div class="row">
+                <!-- TWITTER PANEL -->
+                {% for i in range(nums) %}
+                    {# 每3个为一行！！ #}
+                    {% if i>2 and i//3 == 0 %}
+                        </div>
+                        <div class="row">
+                    {% endif %}
+
+                    <div class="col-lg-4 col-md-4 col-sm-4 mb">
+                        <div class="white-panel pn">
+                            <div class="white-header">
+                                <h5><a href="/jobs/{{ positions[i]['position'].pid }}" target="_blank">{{ positions[i]['position'].name }}</a></h5>
+                            </div>
+                            <p><img src="{{ positions[i]['company'].logo }}" class="img-circle" width="50"></p>
+                            <p><b>{{ positions[i]['position'].c_name }}</b></p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="small mt">薪资</p>
+                                    <p>{{ positions[i]['position'].salary }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="small mt">城市</p>
+                                    <p>{{ positions[i]['position'].city }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="small mt">工作经验</p>
+                                    <p>{{ positions[i]['detail'].workyear }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="small mt">学历要求</p>
+                                    <p>{{ positions[i]['detail'].education }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /col-md-4 -->
+                {% endfor %}
+                </div>
+            <! --/END 1ST ROW OF PANELS -->
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block scripts %}
+    <script type="text/javascript">
+        // 动态选择标签
+        $('ul#nav-accordion li a').removeClass();
+        $('ul#nav-accordion li:eq(5) a').addClass("active");
+    </script>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'main.html' %}
+
+{% block titlebar %}
+    IT职位分析系统-后台管理
+{% endblock %}
+
+{% block sidebar %}
+
+    <aside>
+        <div id="sidebar" class="nav-collapse ">
+            <!-- sidebar menu start-->
+            <ul class="sidebar-menu" id="nav-accordion">
+
+                <p class="centered"><a href="profile.html"><img src="/static/main/img/ui-sam.jpg" class="img-circle"
+                                                                width="60"></a></p>
+                <h5 class="centered">Administrator</h5>
+
+                <li class="mt">
+                    <a class="active" href="">
+                        <i class="fa fa-database"></i>
+                        <span>数据库更新</span>
+                    </a>
+                </li>
+
+                <li class="mt">
+                    <a href="{{ url_for('AdminView:deal') }}">
+                        <i class="fa fa-cogs"></i>
+                        <span>失效职位处理</span>
+                    </a>
+                </li>
+
+            </ul>
+            <!-- sidebar menu end-->
+        </div>
+    </aside>
+    <!--sidebar end-->
+{% endblock %}
+
+
+{% block content %}
+    <h2>职位数据库更新及关键词定义</h2>
+    <div style="margin-top: 130px;">
+        <form action="{{ url_for('AdminView:database') }}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="exampleInputFile" style="font-size: 20px;">自定义关键词文件</label>
+                <input name="category" type="file" id="exampleInputFile">
+            </div>
+            <button type="submit" class="btn btn-default">Update!</button>
+        </form>
+    </div>
+    <div style="margin-top: 50px;">
+        <form action="{{ url_for('AdminView:database') }}">
+            <label for="no_file" style="font-size: 20px;">使用默认关键词文件</label>
+            <br>
+            <button id="no_file" type="submit" class="btn btn-default">Update!</button>
+        </form>
+    </div>
+{% endblock %}

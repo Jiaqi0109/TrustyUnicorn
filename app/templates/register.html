@@ -29,6 +29,7 @@
 </head>
 
 <body>
+
 <nav class="navbar navbar-inverse navbar-no-bg" role="navigation">
     <div class="container">
         <div class="navbar-header">
@@ -58,7 +59,15 @@
             </ul>
         </div>
     </div>
+    {% for message in get_flashed_messages() %}
+        <div style="width: 50%; margin: auto; text-align: center;" class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+            {{ message }}
+        </div>
+    {% endfor %}
 </nav>
+
 
 {% block content %}
 
@@ -76,7 +85,7 @@
                             </p>
                         </div>
                         <div class="top-big-link">
-                            <a class="btn btn-link-1" href="{{ url_for('HomeView:login') }}">已有账号？</a>
+                            <a class="btn btn-link-1" href="{{ url_for('UserView:login') }}">已有账号？</a>
                             <a class="btn btn-link-2" href="{{ url_for('AdminView:index') }}">管理员入口</a>
                         </div>
                     </div>
@@ -92,7 +101,8 @@
                             <div class="form-top-divider"></div>
                         </div>
                         <div class="form-bottom">
-                            <form role="form" action="" method="post" class="registration-form">
+                            <form role="form" action="{{ url_for('UserView:index') }}" method="post"
+                                  class="registration-form">
                                 <div class="form-group">
                                     <label class="sr-only" for="form-username">Username</label>
                                     <input type="text" name="username" placeholder="请输入用户名..."

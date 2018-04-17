@@ -1,0 +1,165 @@
+{% extends 'main.html' %}
+
+
+{% block content %}
+    <h3><i class="fa fa-angle-right"></i> 工作经验/教育背景对薪资的影响</h3>
+    <div id="workyear-salary" style="width: 100%;height:600px;"></div>
+    <div id="education-salary" style="width: 100%;height:600px;"></div>
+    <div id="workyear-education-salary" style="width: 100%;height:600px;"></div>
+{% endblock %}
+
+
+
+{% block scripts %}
+    <script type="text/javascript">
+        // 动态选择标签
+        $('ul#nav-accordion li a').removeClass();
+        $('ul#nav-accordion li:eq(3) a').addClass("active");
+    </script>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var eChart = echarts.init(document.getElementById('education-salary'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: 'IT职业各职位分布情况',
+                subtext: 'data from lagou.com',
+                sublink: 'http://www.lagou.com',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: []
+            },
+            xAxis: {
+                type: 'category',
+                data: [],
+                boundaryGap:false
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        eChart.setOption(option, 1);
+
+        eChart.showLoading();
+        var names = [];
+        var nums = [];
+        $.ajax({
+            type: "get",
+            url: "/wes/es_json/",
+            dataType: "json",
+            success: function (result) {
+                if (result) {
+                    for (var i = 0; i < result["data"].length; i++) {
+                        key = (result["data"][i]["name"]);
+                        num = (result["data"][i]["value"]);
+                        names.push(key);
+                        nums.push(num);
+                    }
+                    eChart.hideLoading();
+                    eChart.setOption({
+                        yAxis: {
+                            data: names
+                        },
+                        series: {
+                            data: nums
+                        }
+                    });
+                }
+            },
+            error: function (errorMsg) {
+                alert("数据获取失败，请与管理员联系!");
+                eChart.hideLoading();
+            }
+        });
+
+    </script>
+
+
+    {#    薪资分布图#}
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var weChart = echarts.init(document.getElementById('workyear-education-salary'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                subtext: 'data from lagou.com',
+                sublink: 'http://www.lagou.com',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            xAxis: {
+                name: '薪资/元',
+                type: 'category',
+                data: []
+            },
+            yAxis: {
+                name: '职位数量',
+                type: 'value'
+            },
+            series: [{
+                name: '职位数量',
+                type: 'line',
+                data: [],
+                areaStyle: {},
+                smooth: true
+            }]
+        };
+        weChart.setOption(option, 1);
+
+        {# 异步加载数据 #}
+        weChart.showLoading();
+        var salary = [];
+        var values = [];
+        $.ajax({
+            type: "POST",
+            url: "/wes/wes_json/",
+            data: {"workyear": "3-5年", "education": "本科及以上"},
+            dataType: "json",
+            success: function (result) {
+                if (result) {
+                    for (var i = 0; i < result["data"].length; i++) {
+                        key = (result["data"][i]["name"]);
+                        num = (result["data"][i]["value"]);
+                        salary.push(key);
+                        values.push(num);
+                    }
+                    weChart.hideLoading();
+                    weChart.setOption({
+                        title: {
+                            text: result['keyword'] + '相关职位薪资分布情况'
+                        },
+                        series: {
+                            data: values
+                        },
+                        xAxis: {
+                            data: salary
+                        }
+                    });
+                }
+            },
+            error: function (errorMsg) {
+                alert("请输入职位关键词!");
+                weChart.hideLoading();
+            }
+        });
+
+    </script>
+
+{% endblock %}

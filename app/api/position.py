@@ -12,6 +12,7 @@ import json
 
 
 keyword = 'XXX'
+
 positions = []
 pids = []
 salary = []
@@ -20,16 +21,27 @@ cities = []
 
 class GeneralView(FlaskView):
 
+
+    @classmethod
+    def get_keyword(cls):
+        global keyword
+        return keyword
+
+
     @route('/get/', methods=['POST'])
     def get_query(self):
         global keyword, positions, pids, salary, cities
         keyword = request.form['keyword']
+        pids = []
+        salary = []
+        cities = []
 
         if keyword == 'C++' or keyword == 'C#':
             d_keyword = '\\'.join(keyword)
-            positions = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(d_keyword))).order_by('publish_time').all()[::-1]
+            positions = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(d_keyword))).all()
         else:
-            positions = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(keyword))).order_by('publish_time').all()[::-1]
+            # positions = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(keyword))).order_by('publish_time').all()[::-1]
+            positions = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(keyword))).all()
 
         for position in positions:
             cities.append(position.city)
@@ -40,12 +52,11 @@ class GeneralView(FlaskView):
 
 
 
-    @route('/general/')
+    @route('/')
     def general(self):
+        return render_template('position.html', keyword=keyword)
 
-        return render_template('general_situation.html')
 
-    @route('/city_json/')
     def city_json(self):
         global keyword, cities, positions
 
@@ -74,13 +85,12 @@ class GeneralView(FlaskView):
         return resp
 
 
-    @route('/education_workyear_json/')
     def education_workyear_json(self):
         global pids, keyword
         educations = []
         workyears = []
         for pid in pids:
-            detail = Detail.query.filter_by(pid=pid).first()
+            detail = Detail.query.get(pid)
             if detail:
                 educations.append(detail.education)
                 workyears.append(detail.workyear)
@@ -118,7 +128,6 @@ class GeneralView(FlaskView):
         return resp
 
 
-    @route('/salary_json/')
     def salary_json(self):
         salarys = []
         data = []

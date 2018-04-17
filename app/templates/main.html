@@ -21,9 +21,18 @@
     <link href="/static/main/css/style-responsive.css" rel="stylesheet">
 
 
+    <!-- Favicon and touch icons -->
+    <link rel="shortcut icon" href="/static/ico/favicon.png">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/static/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/static/ico/apple-touch-icon-57-precomposed.png">
+
+
 </head>
 
 <body>
+
 
 <section id="container">
     <!-- **********************************************************************************************************************************************************
@@ -35,157 +44,25 @@
             <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
         </div>
         <!--logo start-->
-        <a href="index.html" class="logo"><b>DASHGUM FREE</b></a>
+        <a href="index.html" class="logo"><b>
+            {% block titlebar %}
+                IT职业分析系统
+            {% endblock %}
+        </b></a>
         <!--logo end-->
-        <div class="nav notify-row" id="top_menu">
-            <!--  notification start -->
-            <ul class="nav top-menu">
-                <!-- settings start -->
-                <li class="dropdown">
-                    <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
-                        <i class="fa fa-tasks"></i>
-                        <span class="badge bg-theme">4</span>
-                    </a>
-                    <ul class="dropdown-menu extended tasks-bar">
-                        <div class="notify-arrow notify-arrow-green"></div>
-                        <li>
-                            <p class="green">You have 4 pending tasks</p>
-                        </li>
-                        <li>
-                            <a href="index.html#">
-                                <div class="task-info">
-                                    <div class="desc">DashGum Admin Panel</div>
-                                    <div class="percent">40%</div>
-                                </div>
-                                <div class="progress progress-striped">
-                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40"
-                                         aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-                                        <span class="sr-only">40% Complete (success)</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.html#">
-                                <div class="task-info">
-                                    <div class="desc">Database Update</div>
-                                    <div class="percent">60%</div>
-                                </div>
-                                <div class="progress progress-striped">
-                                    <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60"
-                                         aria-valuemin="0" aria-valuemax="100" style="width: 60%">
-                                        <span class="sr-only">60% Complete (warning)</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.html#">
-                                <div class="task-info">
-                                    <div class="desc">Product Development</div>
-                                    <div class="percent">80%</div>
-                                </div>
-                                <div class="progress progress-striped">
-                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="80"
-                                         aria-valuemin="0" aria-valuemax="100" style="width: 80%">
-                                        <span class="sr-only">80% Complete</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.html#">
-                                <div class="task-info">
-                                    <div class="desc">Payments Sent</div>
-                                    <div class="percent">70%</div>
-                                </div>
-                                <div class="progress progress-striped">
-                                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="70"
-                                         aria-valuemin="0" aria-valuemax="100" style="width: 70%">
-                                        <span class="sr-only">70% Complete (Important)</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="external">
-                            <a href="#">See All Tasks</a>
-                        </li>
-                    </ul>
-                </li>
-                <!-- settings end -->
-                <!-- inbox dropdown start-->
-                <li id="header_inbox_bar" class="dropdown">
-                    <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
-                        <i class="fa fa-envelope-o"></i>
-                        <span class="badge bg-theme">5</span>
-                    </a>
-                    <ul class="dropdown-menu extended inbox">
-                        <div class="notify-arrow notify-arrow-green"></div>
-                        <li>
-                            <p class="green">You have 5 new messages</p>
-                        </li>
-                        <li>
-                            <a href="index.html#">
-                                <span class="photo"><img alt="avatar" src="/static/main/img/ui-zac.jpg"></span>
-                                <span class="subject">
-                                    <span class="from">Zac Snider</span>
-                                    <span class="time">Just now</span>
-                                    </span>
-                                <span class="message">
-                                        Hi mate, how is everything?
-                                    </span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.html#">
-                                <span class="photo"><img alt="avatar" src="/static/main/img/ui-divya.jpg"></span>
-                                <span class="subject">
-                                    <span class="from">Divya Manian</span>
-                                    <span class="time">40 mins.</span>
-                                    </span>
-                                <span class="message">
-                                     Hi, I need your help with this.
-                                    </span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.html#">
-                                <span class="photo"><img alt="avatar" src="/static/main/img/ui-danro.jpg"></span>
-                                <span class="subject">
-                                    <span class="from">Dan Rogers</span>
-                                    <span class="time">2 hrs.</span>
-                                    </span>
-                                <span class="message">
-                                        Love your new Dashboard.
-                                    </span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.html#">
-                                <span class="photo"><img alt="avatar" src="/static/main/img/ui-sherman.jpg"></span>
-                                <span class="subject">
-                                    <span class="from">Dj Sherman</span>
-                                    <span class="time">4 hrs.</span>
-                                    </span>
-                                <span class="message">
-                                        Please, answer asap.
-                                    </span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.html#">See all messages</a>
-                        </li>
-                    </ul>
-                </li>
-                <!-- inbox dropdown end -->
-            </ul>
-            <!--  notification end -->
-        </div>
         <div class="top-menu">
             <ul class="nav pull-right top-menu">
-                <li><a class="logout" href="{{ url_for('HomeView:login') }}">Logout</a></li>
+                <li><a class="logout" href="{{ url_for('UserView:login') }}">Logout</a></li>
             </ul>
         </div>
+{#    flask 消息#}
+        {% for message in get_flashed_messages() %}
+            <div style="width: 50%; margin: auto; text-align: center;" class="alert alert-warning alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                {{ message }}
+            </div>
+        {% endfor %}
     </header>
     <!--header end-->
 
@@ -193,71 +70,74 @@
     MAIN SIDEBAR MENU
     *********************************************************************************************************************************************************** -->
     <!--sidebar start-->
-    <aside>
-        <div id="sidebar" class="nav-collapse ">
-            <!-- sidebar menu start-->
-            <ul class="sidebar-menu" id="nav-accordion">
+    {% block sidebar %}
 
-                <p class="centered"><a href="profile.html"><img src="/static/main/img/ui-sam.jpg" class="img-circle"
-                                                                width="60"></a></p>
-                <h5 class="centered">Marcel Newman</h5>
+        <aside>
+            <div id="sidebar" class="nav-collapse ">
+                <!-- sidebar menu start-->
+                <ul class="sidebar-menu" id="nav-accordion">
 
-                <li class="mt">
-                    <a href="{{ url_for('HomeView:home') }}">
-                        <i class="fa fa-dashboard"></i>
-                        <span>IT职业概况</span>
-                    </a>
-                </li>
+                    <p class="centered"><a href="profile.html"><img src="/static/main/img/ui-sam.jpg" class="img-circle"
+                                                                    width="60"></a></p>
+                    <h5 class="centered">Marcel Newman</h5>
 
-                <li class="mt">
-                    <a href="{{ url_for('GeneralView:get_query') }}">
-                        <i class="fa fa-desktop"></i>
-                        <span>心仪职位数据分析</span>
-                        {# TODO 计算出每个城市的平均薪资，得结论 #}
-                    </a>
-                </li>
+                    <li class="mt">
+                        <a href="{{ url_for('HomeView:index') }}">
+                            <i class="fa fa-dashboard"></i>
+                            <span>近期职位概况</span>
+                        </a>
+                    </li>
 
-                <li class="mt">
-                    <a href="javascript:;">
-                        <i class="fa fa-cogs"></i>
-                        <span>心仪城市数据分析</span>
-                        {# TODO 展示薪资分布情况，工作经验、教育背景分布情况 #}
-                    </a>
-                </li>
-                <li class="mt">
-                    <a href="javascript:;">
-                        <i class="fa fa-book"></i>
-                        <span>工作经验/教育背景-薪资关系</span>
-                        {#TODO 不同工作经验的薪资分布折线图，放到一起比较#}
-                        {# TODO 在右上方展示已经选择的选项，可以重置 #}
-                    </a>
-                </li>
-                <li class="mt">
-                    <a href="javascript:;">
-                        <i class="fa fa-tasks"></i>
-                        <span>公司规模/发展阶段-薪资关系</span>
-                        {# TODO 询问是否要指定公司大小及阶段 #}
-                        {# TODO 选择合适的地方指定薪资 #}
-                    </a>
-                </li>
-                <li class="mt">
-                    <a href="javascript:;">
-                        <i class="fa fa-th"></i>
-                        <span>分析结果及职位推荐</span>
-                    </a>
-                </li>
-                <li class="mt">
-                    <a href="javascript:;">
-                        <i class=" fa fa-bar-chart-o"></i>
-                        <span>个人中心</span>
-                    </a>
-                </li>
+                    <li class="mt">
+                        <a href="{{ url_for('GeneralView:general') }}">
+                            <i class="fa fa-desktop"></i>
+                            <span>心仪职位数据分析</span>
+                            {# TODO 计算出每个城市的平均薪资，得结论 #}
+                        </a>
+                    </li>
 
-            </ul>
-            <!-- sidebar menu end-->
-        </div>
-    </aside>
-    <!--sidebar end-->
+                    <li class="mt">
+                        <a href="{{ url_for('CityView:city') }}">
+                            <i class="fa fa-cogs"></i>
+                            <span>心仪城市数据分析</span>
+                            {# TODO 展示薪资分布情况，工作经验、教育背景分布情况 #}
+                        </a>
+                    </li>
+                    <li class="mt">
+                        <a href="{{ url_for('WESView:index') }}">
+                            <i class="fa fa-book"></i>
+                            <span>工作经验/教育背景-薪资关系</span>
+                            {#TODO 不同工作经验的薪资分布折线图，放到一起比较#}
+                            {# TODO 在右上方展示已经选择的选项，可以重置 #}
+                        </a>
+                    </li>
+                    <li class="mt">
+                        <a href="javascript:;">
+                            <i class="fa fa-tasks"></i>
+                            <span>公司规模/发展阶段-薪资关系</span>
+                            {# TODO 询问是否要指定公司大小及阶段 #}
+                            {# TODO 选择合适的地方指定薪资 #}
+                        </a>
+                    </li>
+                    <li class="mt">
+                        <a href="javascript:;">
+                            <i class="fa fa-th"></i>
+                            <span>分析结果及职位推荐</span>
+                        </a>
+                    </li>
+                    <li class="mt">
+                        <a href="{{ url_for('UserView:center') }}">
+                            <i class=" fa fa-bar-chart-o"></i>
+                            <span>个人中心</span>
+                        </a>
+                    </li>
+
+                </ul>
+                <!-- sidebar menu end-->
+            </div>
+        </aside>
+        <!--sidebar end-->
+    {% endblock %}
 
     <!-- **********************************************************************************************************************************************************
     MAIN CONTENT

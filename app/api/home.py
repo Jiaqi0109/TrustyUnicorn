@@ -7,19 +7,12 @@ import json
 
 
 class HomeView(FlaskView):
-    route_base = ''
 
     # 根路由
     def index(self):
-        return render_template('register.html')
-
-    def login(self):
-        return render_template('login.html')
-
-    def home(self):
         return render_template('home.html')
 
-    @route('/position_json/')
+
     def position_json(self):
         data = []
         with open('./app/static/keyword/category.txt', 'r') as f:
@@ -41,7 +34,6 @@ class HomeView(FlaskView):
         resp = Response(content)
         return resp
 
-    @route('/city_json/')
     def city_json(self):
         data = []
         with open('./app/static/keyword/city.txt', 'r') as f:

@@ -1,0 +1,26 @@
+{% extends 'register.html' %}
+
+
+{% block content %}
+    <div class="top-content">
+        <div class="inner-bg">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-5 form-box">
+                        <div class="form-bottom">
+                            <form role="form" action="{{ url_for('AdminView:index') }}" method="post" class="registration-form">
+                                <div class="form-group">
+                                    <label class="sr-only" for="form-password">Auth</label>
+                                    <input type="password" name="auth" placeholder="请输入认证指令..."
+                                           class="form-password form-control" id="form-password">
+                                </div>
+                                <button type="submit" class="btn">提交</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

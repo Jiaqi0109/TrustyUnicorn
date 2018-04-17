@@ -984,7 +984,7 @@ PANELS CONFIGURATIONS
 /*Panel Size*/
 
 .pn {
-	height: 250px;
+	height: 270px;
 	box-shadow: 0 2px 1px rgba(0, 0, 0, 0.2);
 }
 
@@ -1078,7 +1078,7 @@ PANELS CONFIGURATIONS
 .white-panel {
 	text-align: center;
 	background: #ffffff;
-	color: #ccd1d9;
+	color: #444c57;
 }
 
 .white-panel p {
@@ -1090,8 +1090,9 @@ PANELS CONFIGURATIONS
 	background: #f4f4f4;
 	padding: 3px;
 	margin-bottom: 15px;
-	color: #c6c6c6;
+	color: #444444;
 }
+
 .white-panel .small {
 	font-size: 10px;
 	color: #ccd1d9;

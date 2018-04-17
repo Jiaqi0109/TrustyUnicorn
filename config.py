@@ -6,16 +6,18 @@ class Config:
     # 密钥，提交表单需要
     SECRET_KEY = '123456'
 
+    ADMIN_AUTH = '000000'
+
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
 
     MAX_CONTENT_LENGTH = 2 * 1024 * 1024
-    UPLOADED_PHOTOS_DEST = os.path.join(BASE_DIR, 'app/static/upload')
+    UPLOADED_PATH = os.path.join(BASE_DIR, 'app/static/upload')
 
 
 class DevelopmentConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:jiaqi0109@localhost/lagou0404'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:jiaqi0109@localhost/lagou0409'
     DEBUG = True
 
 

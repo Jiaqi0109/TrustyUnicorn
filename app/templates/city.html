@@ -2,102 +2,129 @@
 
 
 {% block content %}
-    <h3><i class="fa fa-angle-right"></i> 本职位信息分布情况</h3>
-    <div id="city" style="width: 100%;height:600px;"></div>
+    <h3><i class="fa fa-angle-right"></i>{{ city }}地区{{ keyword }}相关职位信息分布情况</h3>
+    <div class="row">
+        <div class="main-chart">
+
+            <div class="row mtbox">
+                <div class="col-md-2 col-sm-2 col-md-offset-3 box0">
+                    <div class="box1">
+                        <span class="fa fa-jpy"></span>
+                        <h3>10K-12K</h3>
+                    </div>
+                    <p>工资集中分布在10K-12K。</p>
+                </div>
+                <div class="col-md-2 col-sm-2 box0">
+                    <div class="box1">
+                        <span class="fa fa-desktop"></span>
+                        <h3>1-3年</h3>
+                    </div>
+                    <p>主要需求1-3年工作经验的从业者。</p>
+                </div>
+                <div class="col-md-2 col-sm-2 box0">
+                    <div class="box1">
+                        <span class="fa fa-mortar-board"></span>
+                        <h3>本科及以上</h3>
+                    </div>
+                    <p>要求本科及以上学历。</p>
+                </div>
+            </div><!-- /row mt -->
+        </div>
+    </div>
+    <div class="row">
+        <button type="button" class="btn btn-primary" style="float: right; margin: 0 0 20px 40px;">继续分析不同工作经验/教育背景与工资的关系--></button>
+    </div><!-- /.row -->
+
     <div id="salary" style="width: 100%;height:600px;"></div>
     <div id="workyear" style="width: 100%;height:600px;"></div>
     <div id="education" style="width: 100%;height:600px;"></div>
 {% endblock %}
 
+
 {% block scripts %}
     <script type="text/javascript">
         // 动态选择标签
         $('ul#nav-accordion li a').removeClass();
-        $('ul#nav-accordion li:eq(1) a').addClass("active");
+        $('ul#nav-accordion li:eq(2) a').addClass("active");
     </script>
-    {#    城市分布图#}
+
+
+    {#    薪资分布图#}
     <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('city'));
+        var sChart = echarts.init(document.getElementById('salary'));
 
         // 指定图表的配置项和数据
         var option = {
-            {#backgroundColor: '#b5ad48',#}
-
             title: {
+                text: '薪资分布',
                 subtext: 'data from lagou.com',
                 sublink: 'http://www.lagou.com',
                 left: 'center'
             },
             tooltip: {
-                trigger: 'item',
-                formatter: "{a} <br/>{b} : {c} ({d}%)"
-            },
-            legend: {
-                left: 'left',
-                orient: 'vertical',
-                data: []
-            },
-            series: [{
-                name: '数量（占比）',
-                type: 'pie',
-                radius: '55%',
-                center: ['50%', '60%'],
-                data: [],
-                itemStyle: {
-                    emphasis: {
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
                     }
                 }
+            },
+            xAxis: {
+                name: '薪资/元',
+                type: 'category',
+                data: []
+            },
+            yAxis: {
+                name: '职位数量',
+                type: 'value'
+            },
+            series: [{
+                name: '职位数量',
+                type: 'line',
+                data: [],
+                areaStyle: {},
+                smooth: true
             }]
         };
-        myChart.setOption(option);
+        sChart.setOption(option, 1);
 
         {# 异步加载数据 #}
-        myChart.showLoading();
-        var names = [];
-        var nums = [];
-        var selected = {};
+        sChart.showLoading();
+        var salary = [];
+        var values = [];
         $.ajax({
             type: "get",
-            url: "/general/city_json/",
+            url: "/city/salary_json/",
             dataType: "json",
             success: function (result) {
                 if (result) {
                     for (var i = 0; i < result["data"].length; i++) {
                         key = (result["data"][i]["name"]);
                         num = (result["data"][i]["value"]);
-                        names.push(key);
-                        nums.push(num);
-                        if (i >= 12) {
-                            selected[key] = false
-                        }
-
+                        salary.push(key);
+                        values.push(num);
                     }
-                    myChart.hideLoading();
-                    myChart.setOption({
-                        title: {
-                            text: result['keyword'] + '相关职位城市分布情况'
-                        },
+                    sChart.hideLoading();
+                    sChart.setOption({
                         series: {
-                            data: result["data"]
+                            data: values
                         },
-                        legend: {
-                            data: names,
-                            selected: selected
+                        xAxis: {
+                            data: salary
                         }
                     });
                 }
             },
             error: function (errorMsg) {
-                alert("请输入职位关键词!");
-                myChart.hideLoading();
+                alert("数据错误，请重新开始！");
+                sChart.hideLoading();
             }
         });
 
     </script>
+
 
     {#    学历、工作经验分布图#}
     <script type="text/javascript">
@@ -136,8 +163,8 @@
             ]
         };
         // 使用刚指定的配置项和数据显示图表。
-        eChart.setOption(option);
-        wChart.setOption(option);
+        eChart.setOption(option, 1);
+        wChart.setOption(option, 1);
 
         eChart.showLoading();
         wChart.showLoading();
@@ -148,7 +175,7 @@
         var w_nums = [];
         $.ajax({
             type: "get",
-            url: "/general/education_workyear_json/",
+            url: "/city/education_workyear_json/",
             dataType: "json",
             success: function (result) {
                 if (result) {
@@ -169,7 +196,7 @@
 
                     eChart.setOption({
                         title: {
-                            text: result['keyword'] + '相关职位教育背景分布情况'
+                            text: '教育背景要求分布'
                         },
                         xAxis: {
                             data: e_names
@@ -181,7 +208,7 @@
                     wChart.setOption({
                         color: ['#3398DB'],
                         title: {
-                            text: result['keyword'] + '相关职位工作经验分布情况'
+                            text: '工作经验要求分布'
                         },
                         xAxis: {
                             data: w_names
@@ -198,84 +225,6 @@
                 wChart.hideLoading();
             }
         });
-    </script>
-
-    {#    薪资分布图#}
-    <script type="text/javascript">
-        // 基于准备好的dom，初始化echarts实例
-        var sChart = echarts.init(document.getElementById('salary'));
-
-        // 指定图表的配置项和数据
-        var option = {
-            title: {
-                subtext: 'data from lagou.com',
-                sublink: 'http://www.lagou.com',
-                left: 'center'
-            },
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'cross',
-                    label: {
-                        backgroundColor: '#6a7985'
-                    }
-                }
-            },
-            xAxis: {
-                name: '薪资/元',
-                type: 'category',
-                data: []
-            },
-            yAxis: {
-                name: '职位数量',
-                type: 'value'
-            },
-            series: [{
-                name: '职位数量',
-                type: 'line',
-                data: [],
-                areaStyle: {},
-                smooth: true
-            }]
-        };
-        sChart.setOption(option);
-
-        {# 异步加载数据 #}
-        sChart.showLoading();
-        var salary = [];
-        var values = [];
-        $.ajax({
-            type: "get",
-            url: "/general/salary_json/",
-            dataType: "json",
-            success: function (result) {
-                if (result) {
-                    for (var i = 0; i < result["data"].length; i++) {
-                        key = (result["data"][i]["name"]);
-                        num = (result["data"][i]["value"]);
-                        salary.push(key);
-                        values.push(num);
-                    }
-                    sChart.hideLoading();
-                    sChart.setOption({
-                        title: {
-                            text: result['keyword'] + '相关职位薪资分布情况'
-                        },
-                        series: {
-                            data: values
-                        },
-                        xAxis: {
-                            data: salary
-                        }
-                    });
-                }
-            },
-            error: function (errorMsg) {
-                alert("请输入职位关键词!");
-                sChart.hideLoading();
-            }
-        });
-
     </script>
 
 {% endblock %}

@@ -16,7 +16,7 @@
                             </p>
                         </div>
                         <div class="top-big-link">
-                            <a class="btn btn-link-1" href="{{ url_for('HomeView:index') }}">没有账号？</a>
+                            <a class="btn btn-link-1" href="{{ url_for('UserView:index') }}">没有账号？</a>
                             <a class="btn btn-link-2" href="{{ url_for('AdminView:index') }}">管理员入口</a>
                         </div>
                     </div>
@@ -32,7 +32,7 @@
                             <div class="form-top-divider"></div>
                         </div>
                         <div class="form-bottom">
-                            <form role="form" action="{{ url_for('HomeView:home') }}" class="registration-form">
+                            <form role="form" action="{{ url_for('UserView:login') }}" method="post" class="registration-form">
                                 <div class="form-group">
                                     <label class="sr-only" for="form-username">Username</label>
                                     <input type="text" name="username" placeholder="请输入用户名..."
