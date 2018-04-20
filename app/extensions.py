@@ -17,4 +17,8 @@ def config_extensions(app):
     db.init_app(app)
     mail.init_app(app)
     migrate.init_app(app)
-    # login_manager.init_app(app)
+    login_manager.init_app(app)
+
+    login_manager.login_view = 'UserView:login'
+    login_manager.login_message = '需要登陆才可以访问'
+    login_manager.session_protection = 'strong'

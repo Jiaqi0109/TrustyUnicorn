@@ -52,7 +52,7 @@
         <!--logo end-->
         <div class="top-menu">
             <ul class="nav pull-right top-menu">
-                <li><a class="logout" href="{{ url_for('UserView:login') }}">Logout</a></li>
+                <li><a class="logout" href="{{ url_for('UserView:logout') }}">Logout</a></li>
             </ul>
         </div>
 {#    flask 消息#}
@@ -79,7 +79,7 @@
 
                     <p class="centered"><a href="profile.html"><img src="/static/main/img/ui-sam.jpg" class="img-circle"
                                                                     width="60"></a></p>
-                    <h5 class="centered">Marcel Newman</h5>
+                    <h5 class="centered">{{ current_user.name }}</h5>
 
                     <li class="mt">
                         <a href="{{ url_for('HomeView:index') }}">

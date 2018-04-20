@@ -1,5 +1,6 @@
 from flask import render_template, url_for, request, redirect, Response
 from flask_classy import FlaskView, route
+from flask_login import login_required
 
 from app.models.position import Position
 
@@ -9,6 +10,7 @@ import json
 class HomeView(FlaskView):
 
     # 根路由
+    @login_required
     def index(self):
         return render_template('home.html')
 

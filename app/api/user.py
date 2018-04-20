@@ -1,5 +1,6 @@
 from flask import render_template, url_for, request, redirect, Response, flash
 from flask_classy import FlaskView, route
+from flask_login import login_user, logout_user, login_required
 
 from app.models.position import Position
 from app.models.detail import Detail
@@ -9,15 +10,19 @@ from app.extensions import db
 from datetime import datetime
 
 import json
-import time
 
 
 class UserView(FlaskView):
     route_base = '/'
 
 
-    @route('/', methods=['POST', 'GET'])
+    @route('/')
     def index(self):
+        return redirect(url_for('HomeView:index'))
+
+
+    @route('/register/', methods=['POST', 'GET'])
+    def registers(self):
         if request.method == 'POST':
             uid = datetime.now().strftime('%y%j%f')[:10]
             username = request.form['username']
@@ -30,9 +35,15 @@ class UserView(FlaskView):
                 flash('两次输入密码不一致！')
                 return render_template('register.html')
             email = request.form['email']
-            u = User(uid=uid, name=username, password=password, email=email)
-            db.session.add(u)
+            if User.query.filter_by(email=email).first():
+                flash('该邮箱已注册！')
+                return render_template('register.html')
+            user = User(id=uid, name=username, password=password, email=email)
+            db.session.add(user)
             db.session.commit()
+
+            login_user(user)
+
             flash('欢迎 ' + username + ', 请到个人中心激活账户！')
             return redirect(url_for('HomeView:index'))
         return render_template('register.html')
@@ -43,18 +54,34 @@ class UserView(FlaskView):
         if request.method == 'POST':
             username = request.form['username']
             password = request.form['password']
-            user = User.query.filter_by(name=username).first()
-            if user:
-                if user.password == password:
+            remember = request.form.get('remember')
+            if not remember:
+                remember = False
+            else:
+                remember = True
+            u = User.query.filter_by(name=username).first()
+            if u:
+                if u.password == password:
+                    login_user(u, remember=remember)
                     flash('登陆成功！')
-                    time.sleep(0.5)
-                    return redirect(url_for('HomeView:index'))
+                    next = request.args.get('next')
+                    return redirect(next or url_for('HomeView:index'))
             else:
                 flash('用户名或密码错误，请重新登陆！')
-                time.sleep(0.5)
                 return render_template('login.html')
         return render_template('login.html')
 
+
+    @login_required
+    def logout(self):
+        logout_user()
+        return redirect(url_for('UserView:login'))
+
+
+
+
+
+    @login_required
     def center(self):
         positions = []
         pids = [42093, 42192, 44349, 67631, 77641]
