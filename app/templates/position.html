@@ -2,7 +2,7 @@
 
 
 {% block content %}
-    <h3><i class="fa fa-angle-right"></i>{{ keyword }}相关职位信息分布情况</h3>
+    <h3><i class="fa fa-angle-right"></i> {{ keyword }} 相关职位信息分布情况</h3>
     <div class="row">
         <div class="main-chart">
 
@@ -41,12 +41,12 @@
 
     <div class="row">
         <div class="col-lg-8 col-md-8 col-sm-12 col-md-offset-2">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="输入心仪城市继续分析...">
+            <form action="{{ url_for('CityView:index') }}" method="post" class="input-group">
+                <input type="text" class="form-control" name="city" placeholder="输入心仪城市继续分析...">
                 <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Go!</button>
+                    <button class="btn btn-default" type="submit">Go!</button>
                 </span>
-            </div><!-- /input-group -->
+            </form><!-- /input-group -->
         </div><!-- /.col-lg-6 -->
     </div><!-- /.row -->
     <br>
@@ -63,19 +63,25 @@
         $('ul#nav-accordion li a').removeClass();
         $('ul#nav-accordion li:eq(1) a').addClass("active");
     </script>
-    {#    城市分布图#}
+
+
+
+    {#分布图#}
     <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('city'));
+        var cChart = echarts.init(document.getElementById('city'));
+        var sChart = echarts.init(document.getElementById('salary'));
+        var wChart = echarts.init(document.getElementById('workyear'));
+        var eChart = echarts.init(document.getElementById('education'));
 
         // 指定图表的配置项和数据
-        var option = {
-            {#backgroundColor: '#b5ad48',#}
+        var coption = {
 
             title: {
                 subtext: 'data from lagou.com',
                 sublink: 'http://www.lagou.com',
-                left: 'center'
+                left: 'center',
+                text: '城市分布'
             },
             tooltip: {
                 trigger: 'item',
@@ -101,90 +107,15 @@
                 }
             }]
         };
-        myChart.setOption(option, 1);
-
-        {# 异步加载数据 #}
-        myChart.showLoading();
-        var names = [];
-        var nums = [];
-        var selected = {};
-        $.ajax({
-            type: "get",
-            url: "/general/city_json/",
-            dataType: "json",
-            success: function (result) {
-                if (result) {
-                    for (var i = 0; i < result["data"].length; i++) {
-                        key = (result["data"][i]["name"]);
-                        num = (result["data"][i]["value"]);
-                        names.push(key);
-                        nums.push(num);
-                        if (i >= 12) {
-                            selected[key] = false
-                        }
-
-                    }
-                    myChart.hideLoading();
-                    myChart.setOption({
-                        title: {
-                            text: '城市分布'
-                        },
-                        series: {
-                            data: result["data"]
-                        },
-                        legend: {
-                            data: names,
-                            selected: selected
-                        }
-                    });
-                }
-            },
-            error: function (errorMsg) {
-                alert("请输入职位关键词!");
-                myChart.hideLoading();
-            }
-        });
-
-        function httpPost(URL, PARAMS) {
-            var temp = document.createElement("form");
-            temp.action = URL;
-            temp.method = "post";
-            temp.style.display = "none";
-
-            for (var x in PARAMS) {
-                var opt = document.createElement("textarea");
-                opt.name = x;
-                opt.value = PARAMS[x];
-                temp.appendChild(opt);
-            }
-
-            document.body.appendChild(temp);
-            temp.submit();
-
-            return temp;
-        }
-
-        myChart.on('click', function (param) {
-            {#alert(param.name)#}
-            var params = {
-                "city": param.name
-            };
-            httpPost('/city/get/', params)
-        });
-    </script>
+        cChart.setOption(coption, 1);
 
 
-    {#    薪资分布图#}
-    <script type="text/javascript">
-        // 基于准备好的dom，初始化echarts实例
-        var sChart = echarts.init(document.getElementById('salary'));
-
-        // 指定图表的配置项和数据
-        var option = {
+        var soption = {
             title: {
                 subtext: 'data from lagou.com',
                 sublink: 'http://www.lagou.com',
-                left: 'center'
+                left: 'center',
+                text: '薪资分布'
             },
             tooltip: {
                 trigger: 'axis',
@@ -212,54 +143,10 @@
                 smooth: true
             }]
         };
-        sChart.setOption(option, 1);
-
-        {# 异步加载数据 #}
-        sChart.showLoading();
-        var salary = [];
-        var values = [];
-        $.ajax({
-            type: "get",
-            url: "/general/salary_json/",
-            dataType: "json",
-            success: function (result) {
-                if (result) {
-                    for (var i = 0; i < result["data"].length; i++) {
-                        key = (result["data"][i]["name"]);
-                        num = (result["data"][i]["value"]);
-                        salary.push(key);
-                        values.push(num);
-                    }
-                    sChart.hideLoading();
-                    sChart.setOption({
-                        title: {
-                            text: '薪资分布'
-                        },
-                        series: {
-                            data: values
-                        },
-                        xAxis: {
-                            data: salary
-                        }
-                    });
-                }
-            },
-            error: function (errorMsg) {
-                alert("请输入职位关键词!");
-                sChart.hideLoading();
-            }
-        });
-
-    </script>
+        sChart.setOption(soption, 1);
 
 
-    {#    学历、工作经验分布图#}
-    <script type="text/javascript">
-        var eChart = echarts.init(document.getElementById('education'));
-        var wChart = echarts.init(document.getElementById('workyear'));
-
-        // 指定图表的配置项和数据
-        var option = {
+        var ewoption = {
             title: {
                 subtext: 'data from lagou.com',
                 left: 'center'
@@ -289,69 +176,160 @@
                 }
             ]
         };
-        // 使用刚指定的配置项和数据显示图表。
-        eChart.setOption(option, 1);
-        wChart.setOption(option, 1);
+        eChart.setOption(ewoption, 1);
+        wChart.setOption(ewoption, 1);
 
-        eChart.showLoading();
+
+        cChart.showLoading();
+        sChart.showLoading();
         wChart.showLoading();
+        eChart.showLoading();
 
-        var e_names = [];
-        var e_nums = [];
-        var w_names = [];
-        var w_nums = [];
+
+        {# 异步加载数据 #}
+        var cnames = [];
+        var cnums = [];
+        var selected = {};
+
+        var salary = [];
+        var svalues = [];
+
+        var enames = [];
+        var enums = [];
+
+        var wnames = [];
+        var wnums = [];
+
         $.ajax({
             type: "get",
-            url: "/general/education_workyear_json/",
+            url: "/position/json/",
             dataType: "json",
             success: function (result) {
                 if (result) {
-                    for (var i = 0; i < result["edu_data"].length; i++) {
-                        key = (result["edu_data"][i]["name"]);
-                        num = (result["edu_data"][i]["value"]);
-                        e_names.push(key);
-                        e_nums.push(num);
+                    for (var i = 0; i < result["city_data"].length; i++) {
+                        key = (result["city_data"][i]["name"]);
+                        num = (result["city_data"][i]["value"]);
+                        cnames.push(key);
+                        cnums.push(num);
+                        if (i >= 12) {
+                            selected[key] = false
+                        }
                     }
-                    for (var j = 0; j < result["work_data"].length; j++) {
-                        key = (result["work_data"][j]["name"]);
-                        num = (result["work_data"][j]["value"]);
-                        w_names.push(key);
-                        w_nums.push(num);
+                    for (var j = 0; j < result["salary_data"].length; j++) {
+                        key = (result["salary_data"][j]["name"]);
+                        num = (result["salary_data"][j]["value"]);
+                        salary.push(key);
+                        svalues.push(num);
                     }
-                    eChart.hideLoading();
+                    for (var e = 0; e < result["education_data"].length; e++) {
+                        key = (result["education_data"][e]["name"]);
+                        num = (result["education_data"][e]["value"]);
+                        enames.push(key);
+                        enums.push(num);
+                    }
+                    for (var w = 0; w < result["workyear_data"].length; w++) {
+                        key = (result["workyear_data"][w]["name"]);
+                        num = (result["workyear_data"][w]["value"]);
+                        wnames.push(key);
+                        wnums.push(num);
+                    }
+
+
+                    cChart.hideLoading();
+                    sChart.hideLoading();
                     wChart.hideLoading();
+                    eChart.hideLoading();
+
+
+                    cChart.setOption({
+                        series: {
+                            data: result["city_data"]
+                        },
+                        legend: {
+                            data: cnames,
+                            selected: selected
+                        }
+                    });
+
+                    sChart.setOption({
+                        series: {
+                            data: svalues
+                        },
+                        xAxis: {
+                            data: salary
+                        }
+                    });
 
                     eChart.setOption({
+
                         title: {
                             text: '教育背景要求分布'
                         },
                         xAxis: {
-                            data: e_names
+                            data: enames
                         },
                         series: {
-                            data: e_nums
+                            data: enums
                         }
                     });
+
                     wChart.setOption({
+
                         color: ['#3398DB'],
                         title: {
                             text: '工作经验要求分布'
                         },
                         xAxis: {
-                            data: w_names
+                            data: wnames
                         },
                         series: {
-                            data: w_nums
+                            data: wnums
                         }
                     });
+
                 }
             },
+
+
             error: function (errorMsg) {
-                alert("数据获取失败，请与管理员联系!");
-                eChart.hideLoading();
+                alert("请输入职位关键词!");
+                cChart.hideLoading();
+                sChart.hideLoading();
                 wChart.hideLoading();
+                eChart.hideLoading();
             }
+
+
         });
+
+
+        function httpPost(URL, PARAMS) {
+            var temp = document.createElement("form");
+            temp.action = URL;
+            temp.method = "post";
+            temp.style.display = "none";
+
+            for (var x in PARAMS) {
+                var opt = document.createElement("textarea");
+                opt.name = x;
+                opt.value = PARAMS[x];
+                temp.appendChild(opt);
+            }
+
+            document.body.appendChild(temp);
+            temp.submit();
+
+            return temp;
+        }
+
+        cChart.on('click', function (param) {
+            {#alert(param.name)#}
+            var params = {
+                "city": param.name
+            };
+            httpPost('/city/', params)
+        });
+
     </script>
 
 {% endblock %}

@@ -1,157 +1,62 @@
-import numpy as np
-import pandas as pd
+import json
+from flask import redirect, render_template, request, url_for, Response, session
+from flask_classy import FlaskView, route
+
 from app.models.position import Position
 from app.models.detail import Detail
-from flask import redirect, render_template, request, url_for, Response
-from flask_classy import FlaskView, route
-from pandas import DataFrame, Series
 
-from datetime import datetime
-
-import json
+from app.helpers import *
 
 
-keyword = 'XXX'
+class PositionView(FlaskView):
 
-positions = []
-pids = []
-salary = []
-cities = []
+    @route('/', methods=['GET', 'POST'])
+    def index(self):
+        if request.method == 'POST':
+            keyword = request.form['keyword']
+            session['keyword'] = keyword
+        else:
+            keyword = session.get('keyword')
+            if not keyword:
+                keyword = 'XXX'
+        return render_template('position.html', keyword=keyword)
 
+    @route('/json/')
+    def position_json(self):
+        keyword = session.get('keyword')
 
-class GeneralView(FlaskView):
-
-
-    @classmethod
-    def get_keyword(cls):
-        global keyword
-        return keyword
-
-
-    @route('/get/', methods=['POST'])
-    def get_query(self):
-        global keyword, positions, pids, salary, cities
-        keyword = request.form['keyword']
         pids = []
-        salary = []
+        salaries = []
         cities = []
+        educations = []
+        workyears = []
 
         if keyword == 'C++' or keyword == 'C#':
             d_keyword = '\\'.join(keyword)
             positions = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(d_keyword))).all()
         else:
-            # positions = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(keyword))).order_by('publish_time').all()[::-1]
             positions = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(keyword))).all()
 
         for position in positions:
             cities.append(position.city)
-            salary.append(position.salary)
+            salaries.append(position.salary)
             pids.append(position.pid)
 
-        return redirect(url_for('GeneralView:general'))
-
-
-
-    @route('/')
-    def general(self):
-        return render_template('position.html', keyword=keyword)
-
-
-    def city_json(self):
-        global keyword, cities, positions
-
-        if not positions:
-            return Response()
-
-        nd_city = np.array(cities)
-        # 标签列表
-        s_city = list({c for c in nd_city})
-        # 各标签的个数
-        nums = [np.sum(nd_city == c) for c in s_city]
-
-        data = []
-        for name, value in zip(s_city, nums):
-            data.append({"name": name, "value": str(value)})
-        # 数据排序
-        data = sorted(data, key=lambda x: int(x["value"]), reverse=True)
-
-        datas = {
-            'data': data,
-            'keyword': keyword,
-        }
-
-        content = json.dumps(datas)
-        resp = Response(content)
-        return resp
-
-
-    def education_workyear_json(self):
-        global pids, keyword
-        educations = []
-        workyears = []
         for pid in pids:
             detail = Detail.query.get(pid)
             if detail:
                 educations.append(detail.education)
                 workyears.append(detail.workyear)
-        nd_educations = np.array(educations)
-        nd_workyears = np.array(workyears)
 
-        # 需要排序
-        # 排序方法！！
-        e_sort = ['学历不限', '大专及以上', '本科及以上', '硕士及以上', '博士及以上']
-        w_sort = ['不限', '应届毕业生', '1年以下', '1-3年', '3-5年', '5-10年', '10年以上']
-
-        e_name = list({e for e in nd_educations})
-        e_name = sorted(e_name, key=e_sort.index)
-        e_nums = [np.sum(nd_educations == e) for e in e_name]
-
-        w_name = list({w for w in nd_workyears})
-        w_name = sorted(w_name, key=w_sort.index)
-        w_nums = [np.sum(nd_workyears == w) for w in w_name]
-
-        edu_data = []
-        work_data = []
-        for name, value in zip(e_name, e_nums):
-            edu_data.append({"name": name, "value": str(value)})
-        for name, value in zip(w_name, w_nums):
-            work_data.append({"name": name, "value": str(value)})
+        city_data = city_json(cities)
+        salary_data = salary_json(salaries)
+        education_data, workyear_data = education_workyear_json(educations, workyears)
 
         datas = {
-            'edu_data': edu_data,
-            'work_data': work_data,
-            'keyword': keyword
-        }
-
-        content = json.dumps(datas)
-        resp = Response(content)
-        return resp
-
-
-    def salary_json(self):
-        salarys = []
-        data = []
-        global salary, keyword
-        salary_d = [s.replace('k', '').replace('K', '').replace('以上', '-').replace('+', '-') for s in salary]
-        for s in salary_d:
-            min, max = s.split('-')
-            if not max:
-                if min == '100':
-                    max = '110'
-                else:
-                    max = int(int(min)*1.5)
-            for i in range(int(min), int(max) + 1):
-                salarys.append(i)
-        nd_salarys = np.array(salarys)
-        s_name = list({s for s in nd_salarys})
-        s_name = sorted(s_name)
-        s_nums = [np.sum(nd_salarys == s) for s in s_name]
-        for name, value in zip(s_name, s_nums):
-            data.append({"name": str(name * 1000), "value": str(value)})
-
-        datas = {
-            'data': data,
-            'keyword': keyword
+            'city_data': city_data,
+            'salary_data': salary_data,
+            'education_data': education_data,
+            'workyear_data': workyear_data
         }
         content = json.dumps(datas)
         resp = Response(content)

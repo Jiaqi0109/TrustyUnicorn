@@ -2,7 +2,7 @@
 
 
 {% block content %}
-    <h3><i class="fa fa-angle-right"></i>{{ city }}地区{{ keyword }}相关职位信息分布情况</h3>
+    <h3><i class="fa fa-angle-right"></i> {{ city }} 地区 {{ keyword }} 相关职位信息分布情况</h3>
     <div class="row">
         <div class="main-chart">
 
@@ -32,7 +32,9 @@
         </div>
     </div>
     <div class="row">
-        <button type="button" class="btn btn-primary" style="float: right; margin: 0 0 20px 40px;">继续分析不同工作经验/教育背景与工资的关系--></button>
+        <button type="button" class="btn btn-primary" style="float: right; margin: 0 0 20px 40px;">
+            继续分析不同工作经验/教育背景与工资的关系-->
+        </button>
     </div><!-- /.row -->
 
     <div id="salary" style="width: 100%;height:600px;"></div>
@@ -53,9 +55,11 @@
     <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
         var sChart = echarts.init(document.getElementById('salary'));
+        var eChart = echarts.init(document.getElementById('education'));
+        var wChart = echarts.init(document.getElementById('workyear'));
 
         // 指定图表的配置项和数据
-        var option = {
+        var soption = {
             title: {
                 text: '薪资分布',
                 subtext: 'data from lagou.com',
@@ -88,50 +92,9 @@
                 smooth: true
             }]
         };
-        sChart.setOption(option, 1);
-
-        {# 异步加载数据 #}
-        sChart.showLoading();
-        var salary = [];
-        var values = [];
-        $.ajax({
-            type: "get",
-            url: "/city/salary_json/",
-            dataType: "json",
-            success: function (result) {
-                if (result) {
-                    for (var i = 0; i < result["data"].length; i++) {
-                        key = (result["data"][i]["name"]);
-                        num = (result["data"][i]["value"]);
-                        salary.push(key);
-                        values.push(num);
-                    }
-                    sChart.hideLoading();
-                    sChart.setOption({
-                        series: {
-                            data: values
-                        },
-                        xAxis: {
-                            data: salary
-                        }
-                    });
-                }
-            },
-            error: function (errorMsg) {
-                alert("数据错误，请重新开始！");
-                sChart.hideLoading();
-            }
-        });
-
-    </script>
+        sChart.setOption(soption, 1);
 
 
-    {#    学历、工作经验分布图#}
-    <script type="text/javascript">
-        var eChart = echarts.init(document.getElementById('education'));
-        var wChart = echarts.init(document.getElementById('workyear'));
-
-        // 指定图表的配置项和数据
         var option = {
             title: {
                 subtext: 'data from lagou.com',
@@ -166,65 +129,103 @@
         eChart.setOption(option, 1);
         wChart.setOption(option, 1);
 
+
+        sChart.showLoading();
         eChart.showLoading();
         wChart.showLoading();
 
-        var e_names = [];
-        var e_nums = [];
-        var w_names = [];
-        var w_nums = [];
+
+        {# 异步加载数据 #}
+        var salary = [];
+        var svalues = [];
+
+        var enames = [];
+        var enums = [];
+
+        var wnames = [];
+        var wnums = [];
+
         $.ajax({
             type: "get",
-            url: "/city/education_workyear_json/",
+            url: "/city/json/",
             dataType: "json",
             success: function (result) {
                 if (result) {
-                    for (var i = 0; i < result["edu_data"].length; i++) {
-                        key = (result["edu_data"][i]["name"]);
-                        num = (result["edu_data"][i]["value"]);
-                        e_names.push(key);
-                        e_nums.push(num);
+                    for (var i = 0; i < result["salary_data"].length; i++) {
+                        key = (result["salary_data"][i]["name"]);
+                        num = (result["salary_data"][i]["value"]);
+                        salary.push(key);
+                        svalues.push(num);
                     }
-                    for (var j = 0; j < result["work_data"].length; j++) {
-                        key = (result["work_data"][j]["name"]);
-                        num = (result["work_data"][j]["value"]);
-                        w_names.push(key);
-                        w_nums.push(num);
+
+                    for (var e = 0; e < result["education_data"].length; e++) {
+                        key = (result["education_data"][e]["name"]);
+                        num = (result["education_data"][e]["value"]);
+                        enames.push(key);
+                        enums.push(num);
                     }
+
+                    for (var j = 0; j < result["workyear_data"].length; j++) {
+                        key = (result["workyear_data"][j]["name"]);
+                        num = (result["workyear_data"][j]["value"]);
+                        wnames.push(key);
+                        wnums.push(num);
+                    }
+
+                    sChart.hideLoading();
                     eChart.hideLoading();
                     wChart.hideLoading();
 
+                    sChart.setOption({
+                        series: {
+                            data: svalues
+                        },
+                        xAxis: {
+                            data: salary
+                        }
+                    });
+
                     eChart.setOption({
+
                         title: {
                             text: '教育背景要求分布'
                         },
                         xAxis: {
-                            data: e_names
+                            data: enames
                         },
                         series: {
-                            data: e_nums
+                            data: enums
                         }
                     });
+
                     wChart.setOption({
+
                         color: ['#3398DB'],
                         title: {
                             text: '工作经验要求分布'
                         },
                         xAxis: {
-                            data: w_names
+                            data: wnames
                         },
                         series: {
-                            data: w_nums
+                            data: wnums
                         }
                     });
+
                 }
             },
+
+
             error: function (errorMsg) {
-                alert("数据获取失败，请与管理员联系!");
+                alert("数据错误，请重新开始！");
+                sChart.hideLoading();
                 eChart.hideLoading();
                 wChart.hideLoading();
             }
+
         });
+
     </script>
+
 
 {% endblock %}

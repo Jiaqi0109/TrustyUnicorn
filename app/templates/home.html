@@ -49,12 +49,12 @@
 
     <div class="row">
         <div class="col-lg-8 col-md-8 col-sm-12 col-md-offset-2">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="输入心仪职位继续分析...">
+            <form action="{{ url_for('PositionView:index') }}" method="post" class="input-group">
+                <input type="text" name="keyword" class="form-control" placeholder="输入心仪职位继续分析...">
                 <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Go!</button>
+                    <button class="btn btn-default" type="submit">Go!</button>
                 </span>
-            </div><!-- /input-group -->
+            </form><!-- /input-group -->
         </div><!-- /.col-lg-6 -->
     </div><!-- /.row -->
     <h3><i class="fa fa-angle-right"></i> 目前IT相关职业的分布情况</h3>
@@ -166,7 +166,7 @@
             var params = {
                 "keyword": param.name
             };
-            httpPost('/general/get/', params)
+            httpPost('/position/', params)
         });
 
     </script>

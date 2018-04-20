@@ -20,7 +20,7 @@ def create_app(config_name='production'):
 
 # 注册Flask View
 def configure_views(flask_app):
-    from app.api import GeneralView, HomeView, AdminView, CityView, UserView, WESView, ResultView
+    from app.api import PositionView, HomeView, AdminView, CityView, UserView, WESView, ResultView
     for view in locals().values():
         if type(view) == type and issubclass(view, FlaskView):
             view.register(flask_app)

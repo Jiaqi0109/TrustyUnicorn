@@ -1,6 +1,6 @@
 # 导入各个模块的View，在app中导入
 
-from .position import GeneralView
+from .position import PositionView
 from .home import HomeView
 from .admin import AdminView
 from .city import CityView
