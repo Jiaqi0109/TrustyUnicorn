@@ -8,8 +8,6 @@ from app.models.position import Position
 
 import json
 
-from .position import GeneralView
-
 
 class ResultView(FlaskView):
 
