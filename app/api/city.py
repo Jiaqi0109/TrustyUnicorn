@@ -22,13 +22,14 @@ class CityView(FlaskView):
                 city = 'XXX'
         return render_template('city.html', city=city, keyword=keyword)
 
+
     @route('/json/')
     def city_json(self):
 
         salaries = []
-        pids = []
         educations = []
         workyears = []
+        wes = []
 
         keyword = session.get('keyword')
         city = session.get('city')
@@ -42,13 +43,14 @@ class CityView(FlaskView):
 
         for position in positions:
             salaries.append(position.salary)
-            pids.append(position.pid)
-
-        for pid in pids:
-            detail = Detail.query.get(pid)
+            detail = Detail.query.get(position.pid)
             if detail:
                 educations.append(detail.education)
                 workyears.append(detail.workyear)
+                wes.append({'salary': position.salary, 'education': detail.education, 'workyear': detail.workyear})
+
+        session['wes'] = wes
+
 
         salary_data = salary_json(salaries)
         education_data, workyear_data = education_workyear_json(educations, workyears)

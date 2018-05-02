@@ -1,7 +1,6 @@
 import numpy as np
 
 
-
 def city_json(cities):
     nd_city = np.array(cities)
     # 标签列表
@@ -43,18 +42,18 @@ def education_workyear_json(educations, workyears):
 
     return edu_data, work_data
 
-
+# TODO 需要处理异常
 def salary_json(salaries):
     data = []
     salary = []
     salary_d = [s.replace('k', '').replace('K', '').replace('以上', '-').replace('+', '-') for s in salaries]
     for s in salary_d:
-        min, max = s.split('-')
+        min, max = s.split('-')[:2]
         if not max:
             if min == '100':
                 max = '110'
             else:
-                max = int(int(min)*1.5)
+                max = int(int(min) * 1.5)
         for i in range(int(min), int(max) + 1):
             salary.append(i)
     nd_salarys = np.array(salary)
@@ -65,3 +64,15 @@ def salary_json(salaries):
         data.append({"name": str(name * 1000), "value": str(value)})
 
     return data
+
+
+def salary_amm(salaries):
+    salary = []
+    salary_d = [s.replace('k', '').replace('K', '').replace('以上', '-').replace('+', '-') for s in salaries]
+    for s in salary_d:
+        salary += s.split('-')
+    salary = [int(s) for s in salary if s]
+    s_min = min(salary) * 1000
+    s_max = max(salary) * 1000
+    s_avg = round((sum(salary) / len(salary)), 2) * 1000
+    return s_min, s_max, s_avg

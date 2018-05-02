@@ -47,7 +47,7 @@
                                 <p class="label label-success">已激活</p>
                             {% else %}
                                 <p class="label label-danger">未激活</p>
-                                <span class="form-control-static"><a href=""> （点击链接完成激活！）</a></span>
+                                <span class="form-control-static"><a href="{{ url_for('UserView:activate') }}"> （点击链接完成激活！）</a></span>
                             {% endif %}
                         </div>
                     </div>

@@ -3,9 +3,42 @@
 
 {% block content %}
     <h3><i class="fa fa-angle-right"></i> 工作经验/教育背景对薪资的影响</h3>
-    <div id="workyear-salary" style="width: 100%;height:600px;"></div>
-    <div id="education-salary" style="width: 100%;height:600px;"></div>
-    <div id="workyear-education-salary" style="width: 100%;height:600px;"></div>
+    <div id="workyear-salary" style="width: 100%;height:600px;margin-top: 40px;"></div>
+    <div id="education-salary" style="width: 100%;height:600px;margin-top: 40px;"></div>
+    <div class="row" style="margin-top: 40px;">
+        <div class="col-md-9" id="workyear-education-salary" style="height:600px;"></div>
+        <div class="row col-md-3" style="margin-top: 200px;">
+            <form role="form">
+                <div class="form-group">
+                    <lable class="control-label">教育背景</lable>
+                    <select id="k-edu" class="form-control">
+                        <option>==请选择==</option>
+                        <option>学历不限</option>
+                        <option>大专及以上</option>
+                        <option>本科及以上</option>
+                        <option>硕士及以上</option>
+                        <option>博士及以上</option>
+                    </select>
+                </div>
+            </form>
+            <form role="form">
+                <div class="form-group">
+                    <lable class="control-label">工作经验</lable>
+                    <select id="k-work" class="form-control">
+                        <option>==请选择==</option>
+                        <option>不限</option>
+                        <option>应届毕业生</option>
+                        <option>1年以下</option>
+                        <option>1-3年</option>
+                        <option>3-5年</option>
+                        <option>5-10年</option>
+                        <option>10年以上</option>
+                    </select>
+                </div>
+            </form>
+            <button id="wes-p" type="button" class="col-md-offset-4 col-md-4 btn btn-success" style="margin-top: 40px;">确定</button>
+        </div>
+    </div>
 {% endblock %}
 
 
@@ -19,78 +52,196 @@
     <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
         var eChart = echarts.init(document.getElementById('education-salary'));
+        var wChart = echarts.init(document.getElementById('workyear-salary'));
 
         // 指定图表的配置项和数据
         var option = {
-            title: {
-                text: 'IT职业各职位分布情况',
-                subtext: 'data from lagou.com',
-                sublink: 'http://www.lagou.com',
-                left: 'center'
-            },
+            title: {},
             tooltip: {
                 trigger: 'axis'
             },
-            legend: {
-                data: []
+            legend: {},
+            toolbox: {
+                show: true,
+                feature: {
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }
             },
+            calculable: true,
             xAxis: {
                 type: 'category',
-                data: [],
-                boundaryGap:false
+                data: []
             },
-            yAxis: {
-                type: 'value'
-            },
-            series: [
-            ]
+
+            yAxis: [
+                {
+                    type: 'value'
+                }
+            ],
+            series: []
+
         };
         // 使用刚指定的配置项和数据显示图表。
         eChart.setOption(option, 1);
+        wChart.setOption(option, 1);
 
         eChart.showLoading();
-        var names = [];
-        var nums = [];
+        wChart.showLoading();
+
+        var e_keys = [];
+        var e_mins = [];
+        var e_maxs = [];
+        var e_avgs = [];
+        var w_keys = [];
+        var w_mins = [];
+        var w_maxs = [];
+        var w_avgs = [];
         $.ajax({
             type: "get",
-            url: "/wes/es_json/",
+            url: "/wes/compare_json/",
             dataType: "json",
             success: function (result) {
                 if (result) {
-                    for (var i = 0; i < result["data"].length; i++) {
-                        key = (result["data"][i]["name"]);
-                        num = (result["data"][i]["value"]);
-                        names.push(key);
-                        nums.push(num);
+                    for (var i = 0; i < result["e_data"].length; i++) {
+                        key = (result["e_data"][i]["name"]);
+                        min = (result['e_data'][i]['min']);
+                        max = (result['e_data'][i]['max']);
+                        avg = (result['e_data'][i]['avg']);
+
+                        e_keys.push(key);
+                        e_mins.push(min);
+                        e_maxs.push(max);
+                        e_avgs.push(avg)
                     }
+                    for (var j = 0; j < result["w_data"].length; j++) {
+                        key = (result["w_data"][j]["name"]);
+                        min = (result['w_data'][j]['min']);
+                        max = (result['w_data'][j]['max']);
+                        avg = (result['w_data'][j]['avg']);
+
+                        w_keys.push(key);
+                        w_mins.push(min);
+                        w_maxs.push(max);
+                        w_avgs.push(avg)
+                    }
+
+
                     eChart.hideLoading();
+                    wChart.hideLoading();
+
                     eChart.setOption({
-                        yAxis: {
-                            data: names
+                        title: {
+                            text: '不同教育背景的薪资分布'
                         },
-                        series: {
-                            data: nums
-                        }
+                        legend: {
+                            data: ['最小薪资', '最大薪资', '平均薪资']
+                        },
+                        xAxis: {
+                            data: e_keys
+                        },
+                        series: [
+                            {
+                                name: '最小薪资',
+                                type: 'bar',
+                                data: e_mins,
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                }
+                            },
+                            {
+                                name: '最大薪资',
+                                type: 'bar',
+                                data: e_maxs,
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                }
+                            },
+                            {
+                                name: '平均薪资',
+                                type: 'bar',
+                                data: e_avgs,
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                }
+                            }
+                        ]
                     });
+                    wChart.setOption({
+                        title: {
+                            text: '不同工作经验的薪资分布'
+                        },
+                        legend: {
+                            data: ['最小薪资', '最大薪资', '平均薪资']
+                        },
+                        xAxis: {
+                            data: w_keys
+                        },
+                        series: [
+                            {
+                                name: '最小薪资',
+                                type: 'bar',
+                                data: w_mins,
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                }
+                            },
+                            {
+                                name: '最大薪资',
+                                type: 'bar',
+                                data: w_maxs,
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                }
+                            },
+                            {
+                                name: '平均薪资',
+                                type: 'bar',
+                                data: w_avgs,
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                }
+                            }
+                        ]
+                    });
+
                 }
             },
             error: function (errorMsg) {
                 alert("数据获取失败，请与管理员联系!");
                 eChart.hideLoading();
+                wChart.hideLoading();
             }
         });
 
     </script>
 
-
-    {#    薪资分布图#}
     <script type="text/javascript">
-        // 基于准备好的dom，初始化echarts实例
-        var weChart = echarts.init(document.getElementById('workyear-education-salary'));
 
-        // 指定图表的配置项和数据
+        var myChart = echarts.init(document.getElementById('workyear-education-salary'));
+
         var option = {
             title: {
+                text: '薪资分布',
                 subtext: 'data from lagou.com',
                 sublink: 'http://www.lagou.com',
                 left: 'center'
@@ -121,45 +272,159 @@
                 smooth: true
             }]
         };
-        weChart.setOption(option, 1);
+        myChart.setOption(option, 1);
 
-        {# 异步加载数据 #}
-        weChart.showLoading();
-        var salary = [];
-        var values = [];
-        $.ajax({
-            type: "POST",
-            url: "/wes/wes_json/",
-            data: {"workyear": "3-5年", "education": "本科及以上"},
-            dataType: "json",
-            success: function (result) {
-                if (result) {
-                    for (var i = 0; i < result["data"].length; i++) {
-                        key = (result["data"][i]["name"]);
-                        num = (result["data"][i]["value"]);
-                        salary.push(key);
-                        values.push(num);
-                    }
-                    weChart.hideLoading();
-                    weChart.setOption({
-                        title: {
-                            text: result['keyword'] + '相关职位薪资分布情况'
-                        },
-                        series: {
-                            data: values
-                        },
-                        xAxis: {
-                            data: salary
+
+        var btn = document.getElementById('wes-p');
+        btn.addEventListener('click', function (ev) {
+            var edu = $('#k-edu option:selected').val();
+            var work = $('#k-work option:selected').val();
+            var salary = [];
+            var svalues = [];
+
+            $.ajax({
+                type: "post",
+                url: "/wes/wes_json/",
+                data: {"education": edu, "workyear": work},
+                dataType: 'json',
+                success: function (result) {
+                    if (result) {
+                        for (var i = 0; i < result["data"].length; i++) {
+                            key = (result["data"][i]["name"]);
+                            num = (result["data"][i]["value"]);
+                            salary.push(key);
+                            svalues.push(num);
                         }
-                    });
+
+                        myChart.setOption({
+                            series: {
+                                data: svalues
+                            },
+                            xAxis: {
+                                data: salary
+                            }
+                        });
+
+                    }
+                },
+                error: function (errorMsg) {
+                    alert("数据错误，请重新开始！");
                 }
-            },
-            error: function (errorMsg) {
-                alert("请输入职位关键词!");
-                weChart.hideLoading();
-            }
-        });
+
+            })
+        })
+
 
     </script>
+
+
+    {#    <script type="text/javascript">#}
+    {#        // 基于准备好的dom，初始化echarts实例#}
+    {#        var eChart = echarts.init(document.getElementById('education-salary'));#}
+    {#        var wChart = echarts.init(document.getElementById('workyear-salary'));#}
+    {##}
+    {#        // 指定图表的配置项和数据#}
+    {#        var option = {#}
+    {#            title: {#}
+    {#                text: '折线图堆叠'#}
+    {#            },#}
+    {#            tooltip: {#}
+    {#                trigger: 'axis'#}
+    {#            },#}
+    {#            legend: {#}
+    {#                data: []#}
+    {#            },#}
+    {#            grid: {#}
+    {#                left: '3%',#}
+    {#                right: '4%',#}
+    {#                bottom: '3%',#}
+    {#                containLabel: true#}
+    {#            },#}
+    {#            toolbox: {#}
+    {#                feature: {#}
+    {#                    saveAsImage: {}#}
+    {#                }#}
+    {#            },#}
+    {#            xAxis: {#}
+    {#                type: 'category',#}
+    {#                boundaryGap: false,#}
+    {#                data: []#}
+    {#            },#}
+    {#            yAxis: {#}
+    {#                type: 'value'#}
+    {#            },#}
+    {#            series: [#}
+    {##}
+    {#            ]#}
+    {#        };#}
+    {#        // 使用刚指定的配置项和数据显示图表。#}
+    {#        eChart.setOption(option, 1);#}
+    {##}
+    {#        eChart.showLoading();#}
+    {##}
+    {#        var e_keys = [];#}
+    {#        var e_names = [];#}
+    {#        var e_nums = [];#}
+    {#        $.ajax({#}
+    {#            type: "get",#}
+    {#            url: "/wes/json/",#}
+    {#            dataType: "json",#}
+    {#            success: function (result) {#}
+    {#                if (result) {#}
+    {#                    for (var i = 0; i < result["e_data"].length; i++) {#}
+    {#                        key = (result["e_data"][i]["name"]);#}
+    {#                        _na = [];#}
+    {#                        _va = [];#}
+    {#                        for (var j = 0; j < result["e_data"][i]["value"].length; j++) {#}
+    {#                            names = (result["e_data"][i]["value"][j]["name"]);#}
+    {#                            num = (result["e_data"][i]["value"][j]["value"]);#}
+    {#                            _na.push(names);#}
+    {#                            _va.push(num);#}
+    {#                        }#}
+    {#                        e_names.push(_na);#}
+    {#                        e_nums.push(_va);#}
+    {#                        e_keys.push(key);#}
+    {#                    }#}
+    {##}
+    {#                    function series_func(){#}
+    {#                        var serie = [];#}
+    {#                        for (var e = 0; e < e_keys.length; e++) {#}
+    {#                            var item = {#}
+    {#                                name: e_keys[e],#}
+    {#                                type: 'line',#}
+    {#                                data: e_nums[e],#}
+    {#                                smooth: true#}
+    {#                            };#}
+    {#                            serie.push(item);#}
+    {#                            console.log(item)#}
+    {#                        }#}
+    {#                        return serie#}
+    {#                    }#}
+    {##}
+    {#                    eChart.hideLoading();#}
+    {##}
+    {#                    eChart.setOption({#}
+    {#                        title: {#}
+    {#                            text: '123'#}
+    {#                        },#}
+    {#                        legend: {#}
+    {#                            data: e_keys#}
+    {#                        },#}
+    {#                        xAxis: {#}
+    {#                            data: result['salary_data']#}
+    {#                        },#}
+    {#                        series: series_func()#}
+    {#                    });#}
+    {##}
+    {#                }#}
+    {#            },#}
+    {#            error: function (errorMsg) {#}
+    {#                alert("数据获取失败，请与管理员联系!");#}
+    {#                eChart.hideLoading();#}
+    {#            }#}
+    {#        });#}
+    {##}
+    {#    </script>#}
+
 
 {% endblock %}

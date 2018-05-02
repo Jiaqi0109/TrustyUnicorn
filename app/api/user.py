@@ -1,6 +1,6 @@
 from flask import render_template, url_for, request, redirect, Response, flash
 from flask_classy import FlaskView, route
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 
 from app.models.position import Position
 from app.models.detail import Detail
@@ -78,6 +78,13 @@ class UserView(FlaskView):
         return redirect(url_for('UserView:login'))
 
 
+    # TODO 邮箱激活
+    def activate(self):
+        user = User.query.get(current_user.id)
+        user.activate = True
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('UserView:center'))
 
 
 
@@ -92,6 +99,9 @@ class UserView(FlaskView):
             data = {"position": position, "detail": detail, "company": company}
             positions.append(data)
         nums = len(positions)
+        print('--------------------')
+        print(current_user.id)
+        print('--------------------')
         return render_template('user_center.html', positions=positions, nums=nums)
 
 

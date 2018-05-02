@@ -1,4 +1,5 @@
 import os
+from redis import Redis
 
 
 class Config:
@@ -7,6 +8,10 @@ class Config:
     SECRET_KEY = '123456'
 
     ADMIN_AUTH = '000000'
+
+    # 配置redis作为session服务器
+    SESSION_TYPE = 'redis'
+    SESSION_REDIS = Redis(host='localhost', port='6379', db=0)
 
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
