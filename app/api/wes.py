@@ -1,10 +1,7 @@
-import numpy as np
 from flask import render_template, url_for, request, redirect, Response, session, g
 from flask_classy import FlaskView, route
 
 from app.helpers import *
-from app.models.detail import Detail
-from app.models.position import Position
 
 import json
 
@@ -20,30 +17,12 @@ class WESView(FlaskView):
 
     def compare_json(self):
 
-        keyword = session.get('keyword')
-        city = session.get('city')
-
-        # if keyword == 'C++' or keyword == 'C#':
-        #     d_keyword = '\\'.join(keyword)
-        #     positions = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(d_keyword))).filter_by(
-        #         city=city).all()
-        # else:
-        #     positions = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(keyword))).filter_by(
-        #         city=city).all()
-
-        # wes = []
         e_salary = []
         w_salary = []
         e_data = []
         w_data = []
         e_sort = ['学历不限', '大专及以上', '本科及以上', '硕士及以上', '博士及以上']
         w_sort = ['不限', '应届毕业生', '1年以下', '1-3年', '3-5年', '5-10年', '10年以上']
-        # for position in positions:
-        #     detail = Detail.query.get(position.pid)
-        #     workyear = detail.workyear
-        #     education = detail.education
-        #     salary = position.salary
-        #     wes.append({'salary': salary, 'education': education, 'workyear': workyear})
 
         wes = session.get('wes')
 
@@ -80,21 +59,55 @@ class WESView(FlaskView):
     @route('/wes_json/', methods=['POST'])
     def wes_json(self):
         salaries = []
+        num = 0
         wes = session.get('wes')
         workyear = request.form['workyear']
         education = request.form['education']
         for p in wes:
-            if p['education'] == education and p['workyear'] == workyear:
+            if education and workyear and p['education'] == education and p['workyear'] == workyear:
+                num += 1
+                salaries.append(p['salary'])
+            elif not workyear and p['education'] == education:
+                num += 1
+                salaries.append(p['salary'])
+            elif not education and p['workyear'] == workyear:
+                num += 1
+                salaries.append(p['salary'])
+            elif not education and not workyear:
+                num += 1
                 salaries.append(p['salary'])
         data = salary_json(salaries)
 
         datas = {
             'data': data,
+            'number': num
         }
         content = json.dumps(datas)
         resp = Response(content)
         return resp
 
+
+    @route('/select/', methods=['POST'])
+    def select(self):
+        # TODO 存在多选的问题
+        wes = session.get('wes')
+        com = []
+        education = request.form['education']
+        workyear = request.form['workyear']
+        session['education'] = education
+        session['workyear'] = workyear
+        for p in wes:
+            if education and workyear and p['education'] == education and p['workyear'] == workyear:
+                com.append(p)
+            elif not workyear and p['education'] == education:
+                com.append(p)
+            elif not education and p['workyear'] == workyear:
+                com.append(p)
+            elif not education and not workyear:
+                com.append(p)
+        session['com'] = com
+        print(com)
+        return redirect(url_for('CompanyView:index'))
 
 
     # def json(self):

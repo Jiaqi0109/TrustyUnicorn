@@ -4,8 +4,11 @@ from flask_classy import FlaskView, route
 
 from app.models.position import Position
 from app.models.detail import Detail
+from app.models.company import Company
 
 from app.helpers import *
+
+# TODO 做一个详情的词云，留一个薪资图
 
 
 class CityView(FlaskView):
@@ -44,10 +47,19 @@ class CityView(FlaskView):
         for position in positions:
             salaries.append(position.salary)
             detail = Detail.query.get(position.pid)
-            if detail:
+            company = Company.query.get(position.cid)
+            if detail and company:
                 educations.append(detail.education)
                 workyears.append(detail.workyear)
-                wes.append({'salary': position.salary, 'education': detail.education, 'workyear': detail.workyear})
+                # TODO 将公司类别做成词云
+                wes.append({
+                    'pid': position.pid,
+                    'salary': position.salary,
+                    'education': detail.education,
+                    'workyear': detail.workyear,
+                    'finance_stage': company.finance_stage,
+                    'industry': company.industry
+                })
 
         session['wes'] = wes
 

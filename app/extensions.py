@@ -22,5 +22,5 @@ def config_extensions(app):
     Session(app)
 
     login_manager.login_view = 'UserView:login'
-    login_manager.login_message = '需要登陆才可以访问'
+    # login_manager.login_message = '需要登陆才可以访问'
     login_manager.session_protection = 'strong'

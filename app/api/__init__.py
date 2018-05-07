@@ -7,3 +7,4 @@ from .city import CityView
 from .user import UserView
 from .wes import WESView
 from .result import ResultView
+from .company import CompanyView

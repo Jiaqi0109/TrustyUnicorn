@@ -112,7 +112,7 @@
                         </a>
                     </li>
                     <li class="mt">
-                        <a href="javascript:;">
+                        <a href="{{ url_for('CompanyView:index') }}">
                             <i class="fa fa-tasks"></i>
                             <span>公司规模/发展阶段-薪资关系</span>
                             {# TODO 询问是否要指定公司大小及阶段 #}
@@ -164,6 +164,7 @@
 <script src="/static/main/js/jquery.scrollTo.min.js"></script>
 <script src="/static/main/js/jquery.nicescroll.js" type="text/javascript"></script>
 <script type="text/javascript" src="http://echarts.baidu.com/dist/echarts.js"></script>
+<script type="text/javascript" src="/static/js/worldcloud.js"></script>
 
 
 <!--common script for all pages-->
