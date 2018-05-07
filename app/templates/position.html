@@ -7,54 +7,63 @@
         <div class="main-chart">
 
             <div class="row mtbox">
-                <div class="col-md-2 col-sm-2 col-md-offset-2 box0">
+                <div id="city_box" class="col-md-2 col-sm-2 col-md-offset-2 box0">
                     <div class="box1">
                         <span class="fa fa-map-marker"></span>
-                        <h3>北京、上海</h3>
+                        <h3 id="con"></h3>
                     </div>
-                    <p>{{ keyword }}相关职位主要分布在北京、上海、深圳等城市。</p>
+                    <p>{{ keyword }}相关职位主要分布在<span id="con"></span>等城市。</p>
                 </div>
-                <div class="col-md-2 col-sm-2 box0">
+                <div id="salary_box" class="col-md-2 col-sm-2 box0">
                     <div class="box1">
                         <span class="fa fa-jpy"></span>
-                        <h3>15K-20K</h3>
+                        <h3 id="con"></h3>
                     </div>
-                    <p>工资集中分布在15K-20K。</p>
+                    <p>平均工资<span id="con"></span>￥。</p>
                 </div>
-                <div class="col-md-2 col-sm-2 box0">
+                <div id="workyear_box" class="col-md-2 col-sm-2 box0">
                     <div class="box1">
                         <span class="fa fa-desktop"></span>
-                        <h3>3-5年</h3>
+                        <h3 id="con"></h3>
                     </div>
-                    <p>主要需求3-5年工作经验的从业者。</p>
+                    <p>主要需求<span id="con"></span>工作经验的从业者。</p>
                 </div>
-                <div class="col-md-2 col-sm-2 box0">
+                <div id="education_box" class="col-md-2 col-sm-2 box0">
                     <div class="box1">
                         <span class="fa fa-mortar-board"></span>
-                        <h3>本科及以上</h3>
+                        <h3 id="con"></h3>
                     </div>
-                    <p>要求本科及以上学历。</p>
+                    <p>多数要求<span id="con"></span>学历</p>
                 </div>
             </div><!-- /row mt -->
         </div>
     </div>
 
+    <div id="city" style="width: 100%;height:600px;"></div>
+
+    <br>
+
     <div class="row">
         <div class="col-lg-8 col-md-8 col-sm-12 col-md-offset-2">
             <form action="{{ url_for('CityView:index') }}" method="post" class="input-group">
-                <input type="text" class="form-control" name="city" placeholder="输入心仪城市继续分析...">
+                <div class="form-group">
+                    <select id="city_option" name="city" class="form-control">
+                        <option>全国</option>
+                    </select>
+                </div>
                 <span class="input-group-btn">
                     <button class="btn btn-default" type="submit">Go!</button>
                 </span>
             </form><!-- /input-group -->
         </div><!-- /.col-lg-6 -->
     </div><!-- /.row -->
+
     <br>
 
-    <div id="city" style="width: 100%;height:600px;"></div>
     <div id="salary" style="width: 100%;height:600px;"></div>
     <div id="workyear" style="width: 100%;height:600px;"></div>
     <div id="education" style="width: 100%;height:600px;"></div>
+    <div style="margin-top: 20px;"></div>
 {% endblock %}
 
 {% block scripts %}
@@ -206,6 +215,12 @@
             dataType: "json",
             success: function (result) {
                 if (result) {
+
+                    $('#city_box #con').text(result['city_most']);
+                    $('#salary_box #con').text(result['salary_avg']);
+                    $('#workyear_box #con').text(result['wd']);
+                    $('#education_box #con').text(result['ed']);
+
                     for (var i = 0; i < result["city_data"].length; i++) {
                         key = (result["city_data"][i]["name"]);
                         num = (result["city_data"][i]["value"]);
@@ -286,6 +301,13 @@
                             data: wnums
                         }
                     });
+
+                    var secSelect = document.getElementById('city_option');
+                    for (var s = 0; s < cnames.length; s++) {
+                        var oOption = document.createElement('OPTION');
+                        oOption.text = cnames[s];
+                        secSelect.options.add(oOption);
+                    }
 
                 }
             },

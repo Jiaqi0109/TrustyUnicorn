@@ -74,5 +74,5 @@ def salary_amm(salaries):
     salary = [int(s) for s in salary if s]
     s_min = min(salary) * 1000
     s_max = max(salary) * 1000
-    s_avg = round((sum(salary) / len(salary)), 2) * 1000
+    s_avg = round((sum(salary) / len(salary)), 3) * 1000
     return s_min, s_max, s_avg

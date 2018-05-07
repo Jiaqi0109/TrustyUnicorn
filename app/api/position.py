@@ -1,7 +1,9 @@
 import json
 from flask import redirect, render_template, request, url_for, Response, session
 from flask_classy import FlaskView, route
+from sqlalchemy import func
 
+from app.extensions import db
 from app.models.position import Position
 from app.models.detail import Detail
 
@@ -49,14 +51,25 @@ class PositionView(FlaskView):
                 workyears.append(detail.workyear)
 
         city_data = city_json(cities)
+        city_most = '、'.join(c['name'] for c in city_data[:2])
+
         salary_data = salary_json(salaries)
+        salary_ave = str(int(salary_amm(salaries)[2]))
+
         education_data, workyear_data = education_workyear_json(educations, workyears)
+        ed = sorted(education_data, key=lambda x: int(x["value"]), reverse=True)[0]['name']
+        wd = sorted(workyear_data, key=lambda x: int(x["value"]), reverse=True)[0]['name']
 
         datas = {
             'city_data': city_data,
             'salary_data': salary_data,
             'education_data': education_data,
-            'workyear_data': workyear_data
+            'workyear_data': workyear_data,
+
+            'city_most': city_most,
+            'salary_avg': salary_ave,
+            'ed': ed,
+            'wd': wd
         }
         content = json.dumps(datas)
         resp = Response(content)
