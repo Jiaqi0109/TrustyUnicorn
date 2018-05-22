@@ -82,7 +82,7 @@
                             <h5><a href="/jobs/{{ positions[i]['position'].pid }}" target="_blank">{{ positions[i]['position'].name }}</a></h5>
                         </div>
                         <p><img src="{{ positions[i]['company'].logo }}" class="img-circle" width="50"></p>
-                        <p><b>{{ positions[i]['position'].c_name }}</b></p>
+                        <p><b>{{ positions[i]['company'].name }}</b></p>
                         <div class="row">
                             <div class="col-md-6">
                                 <p class="small mt">薪资</p>
@@ -96,11 +96,11 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <p class="small mt">工作经验</p>
-                                <p>{{ positions[i]['detail'].workyear }}</p>
+                                <p>{{ positions[i]['position'].workyear }}</p>
                             </div>
                             <div class="col-md-6">
                                 <p class="small mt">学历要求</p>
-                                <p>{{ positions[i]['detail'].education }}</p>
+                                <p>{{ positions[i]['position'].education }}</p>
                             </div>
                         </div>
                     </div>

@@ -3,7 +3,6 @@ from flask import render_template, url_for, request, redirect, Response, session
 from flask_classy import FlaskView, route
 
 from app.models.position import Position
-from app.models.detail import Detail
 from app.models.company import Company
 
 from app.helpers import *
@@ -36,13 +35,8 @@ class CityView(FlaskView):
 
         keyword = session.get('keyword')
         city = session.get('city')
-        if keyword == 'C++' or keyword == 'C#':
-            d_keyword = '\\'.join(keyword)
-            positions = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(d_keyword))).filter_by(
-                city=city).all()
-        else:
-            positions = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(keyword))).filter_by(
-                city=city).all()
+
+        positions = get_positions(keyword, city=city)
 
         for position in positions:
             salaries.append(position.salary)

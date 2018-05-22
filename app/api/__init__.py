@@ -3,7 +3,6 @@
 from .position import PositionView
 from .home import HomeView
 from .admin import AdminView
-from .city import CityView
 from .user import UserView
 from .wes import WESView
 from .result import ResultView

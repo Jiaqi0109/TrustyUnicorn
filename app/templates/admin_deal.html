@@ -11,7 +11,7 @@
             <!-- sidebar menu start-->
             <ul class="sidebar-menu" id="nav-accordion">
 
-                <p class="centered"><a href="profile.html"><img src="/static/main/img/ui-sam.jpg" class="img-circle"
+                <p class="centered"><a href="#"><img src="/static/main/img/ui-sam.jpg" class="img-circle"
                                                                 width="60"></a></p>
                 <h5 class="centered">Administrator</h5>
 
@@ -50,51 +50,27 @@
                     <tr>
                         <th><i class="fa fa-bullhorn"></i> 职位名称</th>
                         <th class="hidden-phone"><i class="fa fa-question-circle"></i> 职位薪资</th>
-                        <th><i class="fa fa-bookmark"></i> 职位地点</th>
-                        <th><i class=" fa fa-edit"></i> 目前状态</th>
-                        <th>职位链接</th>
+                        <th><i class=" fa fa-edit"></i> 反馈用户</th>
+                        <th><i class="fa fa-bookmark"></i> 反馈时间</th>
+                        <th>核对链接</th>
                         <th>处理方式</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% if positions %}
-                        {% for position in positions %}
+                    {% if datas %}
+                        {% for data in datas %}
                             <tr>
-                                <td><a href="https://www.lagou.com/jobs/{{ position.pid }}.html" target="_blank">{{ position.name }}</a></td>
-                                <td class="hidden-phone">{{ position.salary }}</td>
-                                <td>{{ position.city }}</td>
-                                <td><span class="label label-info label-mini">未处理</span></td>
+                                <td><a href="https://www.lagou.com/jobs/{{ data['position'].pid }}.html" target="_blank">{{ data['position'].name }}</a></td>
+                                <td class="hidden-phone">{{ data['position'].salary }}</td>
+                                <td>{{ data['user'].name }}</td>
+                                <td>{{ data['f_time'] }}</td>
                                 <td>
-                                    <button class="btn btn-default btn-xs"><a href="https://www.lagou.com/jobs/{{ position.pid }}.html" target="_blank" class="fa fa-check"></a></button>
+                                    <button class="btn btn-default btn-xs"><a href="https://www.lagou.com/jobs/{{ data['position'].pid }}.html" target="_blank" class="fa fa-check"> Link </a></button>
                                 </td>
                                 <td>
-                                    <button class="btn btn-success btn-xs"><i class="fa fa-check"></i></button>
-                                    <button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
+                                    <button class="btn btn-success btn-xs"><a href="{{ url_for('AdminView:preserve_position', fid=data['fid']) }}"><i class="fa fa-check" style="color: #fff;"></i></a></button>
+                                    <button class="btn btn-danger btn-xs"><a href="{{ url_for('AdminView:deal_position', fid=data['fid']) }}"><i class="fa fa-trash-o" style="color: #fff;"></i></a></button>
                                 </td>
-                            </tr>
-                        {% endfor %}
-                        {% for position in deal %}
-                            <tr>
-                                <td><a href="https://www.lagou.com/jobs/{{ position.pid }}.html" target="_blank">{{ position.name }}</a></td>
-                                <td class="hidden-phone">{{ position.salary }}</td>
-                                <td>{{ position.city }}</td>
-                                <td><span class="label label-danger label-mini">已删除</span></td>
-                                <td>
-                                    <button class="btn btn-default btn-xs"><a href="https://www.lagou.com/jobs/{{ position.pid }}.html" target="_blank" class="fa fa-check"></a></button>
-                                </td>
-                                <td></td>
-                            </tr>
-                        {% endfor %}
-                        {% for position in s %}
-                            <tr>
-                                <td><a href="https://www.lagou.com/jobs/{{ position.pid }}.html" target="_blank">{{ position.name }}</a></td>
-                                <td class="hidden-phone">{{ position.salary }}</td>
-                                <td>{{ position.city }}</td>
-                                <td><span class="label label-success label-mini">已保留</span></td>
-                                <td>
-                                    <button class="btn btn-default btn-xs"><a href="https://www.lagou.com/jobs/{{ position.pid }}.html" target="_blank" class="fa fa-check"></a></button>
-                                </td>
-                                <td></td>
                             </tr>
                         {% endfor %}
                     {% else %}

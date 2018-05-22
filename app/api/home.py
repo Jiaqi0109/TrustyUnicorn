@@ -13,7 +13,6 @@ import json
 class HomeView(FlaskView):
 
     # 根路由
-    # TODO 在爬虫中Position加一个category
     @login_required
     def index(self):
         number = db.session.query(func.count(Position.pid)).scalar()

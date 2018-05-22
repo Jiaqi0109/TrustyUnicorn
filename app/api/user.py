@@ -3,9 +3,9 @@ from flask_classy import FlaskView, route
 from flask_login import login_user, logout_user, login_required, current_user
 
 from app.models.position import Position
-from app.models.detail import Detail
 from app.models.company import Company
 from app.models.user import User
+from app.models.feedback import Feedback
 from app.extensions import db
 from datetime import datetime
 
@@ -15,11 +15,9 @@ import json
 class UserView(FlaskView):
     route_base = '/'
 
-
     @route('/')
     def index(self):
         return redirect(url_for('HomeView:index'))
-
 
     @route('/register/', methods=['POST', 'GET'])
     def registers(self):
@@ -38,7 +36,7 @@ class UserView(FlaskView):
             if User.query.filter_by(email=email).first():
                 flash('该邮箱已注册！')
                 return render_template('register.html')
-            user = User(id=uid, name=username, password=password, email=email)
+            user = User(id=uid, name=username, password=password, email=email, pids='')
             db.session.add(user)
             db.session.commit()
 
@@ -47,7 +45,6 @@ class UserView(FlaskView):
             flash('欢迎 ' + username + ', 请到个人中心激活账户！')
             return redirect(url_for('HomeView:index'))
         return render_template('register.html')
-
 
     @route('/login/', methods=['POST', 'GET'])
     def login(self):
@@ -71,12 +68,10 @@ class UserView(FlaskView):
                 return render_template('login.html')
         return render_template('login.html')
 
-
     @login_required
     def logout(self):
         logout_user()
         return redirect(url_for('UserView:login'))
-
 
     # TODO 邮箱激活
     def activate(self):
@@ -86,32 +81,80 @@ class UserView(FlaskView):
         db.session.commit()
         return redirect(url_for('UserView:center'))
 
-
-
     @login_required
     def center(self):
         positions = []
-        pids = [42093, 42192, 44349, 67631, 77641]
-        for pid in pids:
+        pids = current_user.pids
+        pids = pids.split('-')
+        for pid in pids[::-1]:
             position = Position.query.get(pid)
-            detail = Detail.query.get(pid)
-            company = Company.query.get(position.cid)
-            data = {"position": position, "detail": detail, "company": company}
-            positions.append(data)
+            if position:
+                company = Company.query.get(position.cid)
+                data = {"position": position, "company": company}
+                positions.append(data)
         nums = len(positions)
-        print('--------------------')
-        print(current_user.id)
-        print('--------------------')
         return render_template('user_center.html', positions=positions, nums=nums)
 
-
-
     @route('/jobs/<pid>')
+    @login_required
     def show_position(self, pid):
         position = Position.query.get(pid)
-        detail = Detail.query.get(pid)
         company = Company.query.get(position.cid)
-        data = {"position": position, "detail": detail, "company": company}
-        description = detail.description.split('\n')
-        return render_template('show_position.html', data=data, description=description)
+        data = {"position": position, "company": company}
+        description = position.description.split('\n')
 
+        u_positions = current_user.pids
+        u_positions = u_positions.split('-')
+        if pid in u_positions:
+            collection = 1
+        else:
+            collection = 0
+
+        return render_template('show_position.html', data=data, description=description, collection=collection)
+
+    @route('/collection/<pid>')
+    @login_required
+    def collection_position(self, pid):
+        user = User.query.get(current_user.id)
+        collection_pids = user.pids
+        collection_pids = collection_pids.split('-')
+        if pid not in collection_pids:
+            collection_pids.append(pid)
+        collection_pids = '-'.join(collection_pids)
+        user.pids = collection_pids
+        db.session.add(user)
+        db.session.commit()
+        flash('已收藏该职位！')
+        return redirect(url_for('UserView:show_position', pid=pid))
+
+    @route('/cancel_collection/<pid>')
+    @login_required
+    def cancel_collection(self, pid):
+        user = User.query.get(current_user.id)
+        collection_pids = user.pids
+        collection_pids = collection_pids.split('-')
+        if pid in collection_pids:
+            collection_pids.remove(pid)
+        collection_pids = '-'.join(collection_pids)
+        user.pids = collection_pids
+        db.session.add(user)
+        db.session.commit()
+        flash('已取消收藏该职位！')
+        return redirect(url_for('UserView:show_position', pid=pid))
+
+    @route('/feedback/<pid>')
+    @login_required
+    def feedback(self, pid):
+        feedbacks = Feedback.query.all()
+        for feedback in feedbacks:
+            if str(feedback.pid) == pid:
+                flash('感谢您的反馈，请待管理员处理。')
+                return redirect(url_for('UserView:show_position', pid=pid))
+        feedback = Feedback()
+        feedback.fid = datetime.now().strftime('%y%m%d%f')[:10]
+        feedback.uid = current_user.id
+        feedback.pid = pid
+        db.session.add(feedback)
+        db.session.commit()
+        flash('感谢您的反馈，请待管理员处理。')
+        return redirect(url_for('UserView:show_position', pid=pid))

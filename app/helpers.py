@@ -1,5 +1,26 @@
 import numpy as np
 
+from app.models.position import Position
+
+
+def get_positions(keyword, city='全国', education='', workyear=''):
+    if keyword == 'C++' or keyword == 'C#':
+        d_keyword = '\\'.join(keyword)
+        query = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(d_keyword)))
+    else:
+        query = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(keyword)))
+
+    if city != '全国':
+        query = query.filter_by(city=city)
+    if education:
+        query = query.filter_by(education=education)
+    if workyear:
+        query = query.filter_by(workyear=workyear)
+
+    positions = query.all()
+
+    return positions
+
 
 def city_json(cities):
     nd_city = np.array(cities)

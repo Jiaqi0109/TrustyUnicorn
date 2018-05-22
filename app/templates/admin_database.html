@@ -11,7 +11,7 @@
             <!-- sidebar menu start-->
             <ul class="sidebar-menu" id="nav-accordion">
 
-                <p class="centered"><a href="profile.html"><img src="/static/main/img/ui-sam.jpg" class="img-circle"
+                <p class="centered"><a href="#"><img src="/static/main/img/ui-sam.jpg" class="img-circle"
                                                                 width="60"></a></p>
                 <h5 class="centered">Administrator</h5>
 
@@ -40,7 +40,7 @@
 {% block content %}
     <h2>职位数据库更新及关键词定义</h2>
     <div style="margin-top: 130px;">
-        <form action="{{ url_for('AdminView:database') }}" method="post" enctype="multipart/form-data">
+        <form action="{{ url_for('AdminView:update_database') }}" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="exampleInputFile" style="font-size: 20px;">自定义关键词文件</label>
                 <input name="category" type="file" id="exampleInputFile">
@@ -49,7 +49,7 @@
         </form>
     </div>
     <div style="margin-top: 50px;">
-        <form action="{{ url_for('AdminView:database') }}">
+        <form action="{{ url_for('AdminView:update_database') }}">
             <label for="no_file" style="font-size: 20px;">使用默认关键词文件</label>
             <br>
             <button id="no_file" type="submit" class="btn btn-default">Update!</button>

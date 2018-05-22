@@ -5,17 +5,31 @@ from app.helpers import *
 
 import json
 
+from app.models.position import Position
+
 
 class WESView(FlaskView):
 
+    @route('/', methods=['GET', 'POST'])
     def index(self):
         keyword = session.get('keyword')
-        city = session.get('city')
+        if request.method == 'POST':
+            city = request.form['city']
+            session['city'] = city
+        else:
+            city = session.get('city')
+            if not city:
+                city = 'XXX'
         return render_template('education_workyear_salary.html', city=city, keyword=keyword)
 
 
 
     def compare_json(self):
+
+        keyword = session.get('keyword')
+        city = session.get('city')
+
+        positions = get_positions(keyword, city=city)
 
         e_salary = []
         w_salary = []
@@ -24,20 +38,18 @@ class WESView(FlaskView):
         e_sort = ['学历不限', '大专及以上', '本科及以上', '硕士及以上', '博士及以上']
         w_sort = ['不限', '应届毕业生', '1年以下', '1-3年', '3-5年', '5-10年', '10年以上']
 
-        wes = session.get('wes')
-
         for e in e_sort:
-            for p in wes:
-                if p['education'] == e:
-                    e_salary.append(p['salary'])
+            for position in positions:
+                if position.education == e:
+                    e_salary.append(position.salary)
             if e_salary:
                 s_min, s_max, s_avg = salary_amm(e_salary)
                 e_data.append({'name': e, 'min':s_min, 'max':s_max, 'avg':s_avg })
                 e_salary = []
         for w in w_sort:
-            for p in wes:
-                if p['workyear'] == w:
-                    w_salary.append(p['salary'])
+            for position in positions:
+                if position.workyear == w:
+                    w_salary.append(position.salary)
             if w_salary:
                 w_min, w_max, w_avg = salary_amm(w_salary)
                 w_data.append({'name': w, 'min':w_min, 'max':w_max, 'avg':w_avg })
@@ -60,22 +72,17 @@ class WESView(FlaskView):
     def wes_json(self):
         salaries = []
         num = 0
-        wes = session.get('wes')
+
+        keyword = session.get('keyword')
+        city = session.get('city')
         workyear = request.form['workyear']
         education = request.form['education']
-        for p in wes:
-            if education and workyear and p['education'] == education and p['workyear'] == workyear:
-                num += 1
-                salaries.append(p['salary'])
-            elif not workyear and p['education'] == education:
-                num += 1
-                salaries.append(p['salary'])
-            elif not education and p['workyear'] == workyear:
-                num += 1
-                salaries.append(p['salary'])
-            elif not education and not workyear:
-                num += 1
-                salaries.append(p['salary'])
+
+        positions = get_positions(keyword, city=city, education=education, workyear=workyear)
+
+        for position in positions:
+            num += 1
+            salaries.append(position.salary)
         data = salary_json(salaries)
 
         datas = {
@@ -85,29 +92,6 @@ class WESView(FlaskView):
         content = json.dumps(datas)
         resp = Response(content)
         return resp
-
-
-    @route('/select/', methods=['POST'])
-    def select(self):
-        # TODO 存在多选的问题
-        wes = session.get('wes')
-        com = []
-        education = request.form['education']
-        workyear = request.form['workyear']
-        session['education'] = education
-        session['workyear'] = workyear
-        for p in wes:
-            if education and workyear and p['education'] == education and p['workyear'] == workyear:
-                com.append(p)
-            elif not workyear and p['education'] == education:
-                com.append(p)
-            elif not education and p['workyear'] == workyear:
-                com.append(p)
-            elif not education and not workyear:
-                com.append(p)
-        session['com'] = com
-        print(com)
-        return redirect(url_for('CompanyView:index'))
 
 
     # def json(self):

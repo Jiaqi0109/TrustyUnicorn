@@ -5,7 +5,6 @@ from sqlalchemy import func
 
 from app.extensions import db
 from app.models.position import Position
-from app.models.detail import Detail
 
 from app.helpers import *
 
@@ -27,29 +26,19 @@ class PositionView(FlaskView):
     def position_json(self):
         keyword = session.get('keyword')
 
-        pids = []
         salaries = []
         cities = []
         educations = []
         workyears = []
 
-        if keyword == 'C++' or keyword == 'C#':
-            d_keyword = '\\'.join(keyword)
-            positions = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(d_keyword))).all()
-        else:
-            positions = Position.query.filter(Position.name.op('regexp')(r'({0})'.format(keyword))).all()
+        positions = get_positions(keyword)
 
         for position in positions:
             cities.append(position.city)
             salaries.append(position.salary)
-            pids.append(position.pid)
-
-        for pid in pids:
-            detail = Detail.query.get(pid)
-            if detail:
-                educations.append(detail.education)
-                workyears.append(detail.workyear)
-
+            educations.append(position.education)
+            workyears.append(position.workyear)
+            
         city_data = city_json(cities)
         city_most = '、'.join(c['name'] for c in city_data[:2])
 

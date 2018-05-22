@@ -15,15 +15,15 @@ class Config:
 
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    # SQLALCHEMY_ECHO = True
-    SQLALCHEMY_ECHO = False
+    SQLALCHEMY_ECHO = True
+    # SQLALCHEMY_ECHO = False
 
     MAX_CONTENT_LENGTH = 2 * 1024 * 1024
     UPLOADED_PATH = os.path.join(BASE_DIR, 'app/static/upload')
 
 
 class DevelopmentConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:jiaqi0109@localhost/lagou0409'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:jiaqi0109@localhost/lagou0508'
     DEBUG = True
 
 

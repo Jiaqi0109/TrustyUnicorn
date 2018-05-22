@@ -3,60 +3,66 @@
 
 {% block content %}
     <div class="row mt">
-        <p class="centered">
-            <img class="img-circle" src="{{ data['company'].logo }}" alt="" width="100">
-        </p>
-        <h2 class="centered">{{ data['position'].c_name }}</h2>
-        <h5 class="centered">{{ data['position'].c_full_name }}</h5>
-        <h4 class="centered">{{ data['company'].industry }} / {{ data['company'].scale }} / {{ data['company'].finance_stage }}</h4>
+    <p class="centered">
+        <img class="img-circle" src="{{ data['company'].logo }}" alt="" width="100">
+    </p>
+    <h2 class="centered">{{ data['company'].name }}</h2>
+    <h5 class="centered">{{ data['company'].full_name }}</h5>
+    <h4 class="centered">{{ data['company'].industry }} / {{ data['company'].finance_stage }}
+        / {{ data['company'].scale }}</h4>
 
-        <div class="col-lg-2 col-md-2"></div>
-        <div class="col-lg-8 col-md-8 col-sm-12">
-            <div class="white-panel">
-                <div class="white-header" style="text-align: left;">
-                    <h5>
-                        <span style="text-align: left; font-size: 18px;"> {{ data['position'].name }}</span>
-                        <span style="float: right;">
+    <div class="col-lg-2 col-md-2"></div>
+    <div class="col-lg-8 col-md-8 col-sm-12">
+        <div class="white-panel">
+            <div class="white-header" style="text-align: left;">
+                <h5>
+                    <span style="text-align: left; font-size: 18px;"> {{ data['position'].name }}</span>
+                    <span style="float: right;">
                             <a target="_blank" href="https://www.lagou.com/jobs/{{ data['position'].pid }}.html">投简历</a>
-                            <a target="_blank" href="https://www.lagou.com/jobs/{{ data['position'].pid }}.html">职位已失效？</a>
+                            <a href="{{ url_for('UserView:feedback', pid=data['position'].pid) }}">职位已失效？</a>
                         </span>
-                    </h5>
+                </h5>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <p>{{ data['position'].salary }}</p>
                 </div>
-                <div class="row">
-                    <div class="col-md-2">
-                        <p>{{ data['position'].salary }}</p>
-                    </div>
-                    <div class="col-md-2">
-                        <p>{{ data['position'].city }}</p>
-                    </div>
-                    <div class="col-md-2">
-                        <p>{{ data['detail'].workyear }}</p>
-                    </div>
-                    <div class="col-md-2">
-                        <p>{{ data['detail'].education }}</p>
-                    </div>
-                    <div class="col-md-2">
-                        <p>{{ data['detail'].jobnature }}</p>
-                    </div>
+                <div class="col-md-2">
+                    <p>{{ data['position'].city }}</p>
                 </div>
-                <div class="row">
-                    <div class="col-md-12" style="text-align: left;">
-                        <p class="small mt">职位诱惑</p>
-                        <p>{{ data['detail'].temptation }}</p>
-                    </div>
+                <div class="col-md-2">
+                    <p>{{ data['position'].workyear }}</p>
                 </div>
-                <div class="row">
-                    <div class="col-md-12" style="text-align: left;">
-                        <p class="small mt">职位描述</p>
-                        {% for des in description %}
-                            <p>{{ des }}</p>
-                        {% endfor %}
-                    </div>
+                <div class="col-md-2">
+                    <p>{{ data['position'].education }}</p>
                 </div>
-                <div class="profile-01 centered">
-                    <p>收藏</p>
+                <div class="col-md-2">
+                    <p>{{ data['position'].jobnature }}</p>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12" style="text-align: left;">
+                    <p class="small mt">职位诱惑</p>
+                    <p>{{ data['position'].temptation }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12" style="text-align: left;">
+                    <p class="small mt">职位描述</p>
+                    {% for des in description %}
+                        <p>{{ des }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            {% if collection %}
+                <div class="profile-01 centered">
+                    <a href="{{ url_for('UserView:cancel_collection', pid=data['position'].pid) }}"><p>已收藏</p></a>
+                </div>
+            {% else %}
+                <div class="profile-01 centered">
+                    <a href="{{ url_for('UserView:collection_position', pid=data['position'].pid) }}"><p>收藏</p></a>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
