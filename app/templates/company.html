@@ -2,15 +2,49 @@
 
 
 {% block content %}
-    <h3><i class="fa fa-angle-right"></i> {{ keyword }} 相关职位信息分布情况</h3>
+    <h3><i class="fa fa-angle-right"></i> 公司行业领域/发展阶段对薪资的影响 -- {{ keyword }}/{{ city }}</h3>
     {#    <div id="ciyun" style="width: 100%;height:600px;"></div>#}
+
     <div class="row">
-        <div class="col-md-6 col-sm-12" id="finance_stage_1" style="width: 35%;height:600px;"></div>
-        <div class="col-md-6 col-sm-12" id="finance_stage_2" style="width: 65%;height:600px;"></div>
+
+    <div class="row col-md-12 col-md-offset-4">
+        <form action="{{ url_for('AnalysisView:save_company') }}" method="post" class="col-md-3">
+            <div role="form">
+                <div class="form-group">
+                    <lable class="control-label"> 公司领域</lable>
+                    <input type="text" name="industry" class="form-control">
+                </div>
+            </div>
+            <div role="form">
+                <div class="form-group">
+                    <lable class="control-label"> 发展阶段</lable>
+                    <select name="finance_stage" id="k-edu" class="form-control">
+                        <option></option>
+                        <option>未融资</option>
+                        <option>天使轮</option>
+                        <option>A轮</option>
+                        <option>B轮</option>
+                        <option>C轮</option>
+                        <option>D轮及以上</option>
+                        <option>上市公司</option>
+                        <option>不需要融资</option>
+                    </select>
+                </div>
+            </div>
+            <button id="continue" type="submit" class="col-md-offset-4 col-md-4 btn btn-success"
+                    style="margin-top: 10px;">提交/继续
+            </button>
+        </form>
     </div>
-    <div class="row">
+    </div>
+
+    <div class="row" style="margin-top: 40px;">
         <div class="col-md-6 col-sm-12" id="industry_1" style="width: 35%;height:600px;"></div>
         <div class="col-md-6 col-sm-12" id="industry_2" style="width: 65%;height:600px;"></div>
+    </div>
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-md-6 col-sm-12" id="finance_stage_1" style="width: 35%;height:600px;"></div>
+        <div class="col-md-6 col-sm-12" id="finance_stage_2" style="width: 65%;height:600px;"></div>
     </div>
 
 {% endblock %}
@@ -21,7 +55,7 @@
     <script type="text/javascript">
         // 动态选择标签
         $('ul#nav-accordion li a').removeClass();
-        $('ul#nav-accordion li:eq(4) a').addClass("active");
+        $('ul#nav-accordion li:eq(3) a').addClass("active");
     </script>
 
     {#    <script type="text/javascript">#}
@@ -79,156 +113,6 @@
     {#        });#}
     {##}
     {#    </script>#}
-
-
-    <script type="text/javascript">
-
-        var f1Chart = echarts.init(document.getElementById('finance_stage_1'));
-        var f2Chart = echarts.init(document.getElementById('finance_stage_2'));
-        var f1option = {
-            title: {
-                text: '融资阶段职位分布',
-                subtext: 'Data from lagou',
-                x: 'center'
-            },
-            tooltip: {
-                trigger: 'item',
-                formatter: "{a} <br/>{b} : {c} ({d}%)"
-            },
-            series: {
-                name: '访问来源',
-                type: 'pie',
-                radius: '55%',
-                center: ['50%', '60%'],
-                data: [],
-                itemStyle: {
-                    emphasis: {
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)'
-                    }
-                }
-            }
-        };
-        f2option = {
-            title: {
-                text: '各个融资阶段与薪资的关系',
-                subtext: '纯属虚构'
-            },
-            tooltip: {
-                trigger: 'axis'
-            },
-            legend: {},
-            toolbox: {
-                show: true,
-                feature: {
-                    magicType: {show: true, type: ['line', 'bar']},
-                    restore: {show: true},
-                    saveAsImage: {show: true}
-                }
-            },
-            calculable: true,
-            xAxis: {
-                type: 'category',
-                data: []
-            },
-
-            yAxis: [
-                {
-                    type: 'value'
-                }
-            ],
-            series: []
-        };
-        f1Chart.setOption(f1option, 1);
-        f2Chart.setOption(f2option, 1);
-
-        f1Chart.showLoading();
-        f2Chart.showLoading();
-
-        var f_keys = [];
-        var f_mins = [];
-        var f_maxs = [];
-        var f_avgs = [];
-        $.ajax({
-            type: "get",
-            url: "/company/finance_json/",
-            dataType: "json",
-            success: function (result) {
-                for (var i = 0; i < result["f_data"].length; i++) {
-                    key = (result["f_data"][i]["name"]);
-                    min = (result['f_data'][i]['min']);
-                    max = (result['f_data'][i]['max']);
-                    avg = (result['f_data'][i]['avg']);
-
-                    f_keys.push(key);
-                    f_mins.push(min);
-                    f_maxs.push(max);
-                    f_avgs.push(avg)
-                }
-
-                if (result) {
-                    f1Chart.hideLoading();
-                    f2Chart.hideLoading();
-                    f1Chart.setOption({
-                        series: {
-                            data: result["data"]
-                        }
-                    });
-
-                    f2Chart.setOption({
-                        legend: {
-                            data: ['最小薪资', '最大薪资', '平均薪资']
-                        },
-                        xAxis: {
-                            data: f_keys
-                        },
-                        series: [
-                            {
-                                name: '最小薪资',
-                                type: 'bar',
-                                data: f_mins,
-                                markPoint: {
-                                    data: [
-                                        {type: 'max', name: '最大值'},
-                                        {type: 'min', name: '最小值'}
-                                    ]
-                                }
-                            },
-                            {
-                                name: '最大薪资',
-                                type: 'bar',
-                                data: f_maxs,
-                                markPoint: {
-                                    data: [
-                                        {type: 'max', name: '最大值'},
-                                        {type: 'min', name: '最小值'}
-                                    ]
-                                }
-                            },
-                            {
-                                name: '平均薪资',
-                                type: 'bar',
-                                data: f_avgs,
-                                markPoint: {
-                                    data: [
-                                        {type: 'max', name: '最大值'},
-                                        {type: 'min', name: '最小值'}
-                                    ]
-                                }
-                            }
-                        ]
-                    });
-                }
-            },
-            error: function (errorMsg) {
-                alert("数据获取失败，请与管理员联系!");
-                f1Chart.hideLoading();
-                f2Chart.hideLoading();
-            }
-        })
-
-    </script>
 
     <script type="text/javascript">
 
@@ -386,6 +270,155 @@
                 alert("数据获取失败，请与管理员联系!");
                 i1Chart.hideLoading();
                 i2Chart.hideLoading();
+            }
+        })
+
+    </script>
+
+    <script type="text/javascript">
+
+        var f1Chart = echarts.init(document.getElementById('finance_stage_1'));
+        var f2Chart = echarts.init(document.getElementById('finance_stage_2'));
+        var f1option = {
+            title: {
+                text: '融资阶段职位分布',
+                subtext: 'Data from lagou',
+                x: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            series: {
+                name: '访问来源',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '60%'],
+                data: [],
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        };
+        f2option = {
+            title: {
+                text: '各个融资阶段与薪资的关系',
+                subtext: '纯属虚构'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {},
+            toolbox: {
+                show: true,
+                feature: {
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }
+            },
+            calculable: true,
+            xAxis: {
+                type: 'category',
+                data: []
+            },
+
+            yAxis: [
+                {
+                    type: 'value'
+                }
+            ],
+            series: []
+        };
+        f1Chart.setOption(f1option, 1);
+        f2Chart.setOption(f2option, 1);
+
+        f1Chart.showLoading();
+        f2Chart.showLoading();
+
+        var f_keys = [];
+        var f_mins = [];
+        var f_maxs = [];
+        var f_avgs = [];
+        $.ajax({
+            type: "get",
+            url: "/company/finance_json/",
+            dataType: "json",
+            success: function (result) {
+                for (var i = 0; i < result["f_data"].length; i++) {
+                    key = (result["f_data"][i]["name"]);
+                    min = (result['f_data'][i]['min']);
+                    max = (result['f_data'][i]['max']);
+                    avg = (result['f_data'][i]['avg']);
+
+                    f_keys.push(key);
+                    f_mins.push(min);
+                    f_maxs.push(max);
+                    f_avgs.push(avg)
+                }
+
+                if (result) {
+                    f1Chart.hideLoading();
+                    f2Chart.hideLoading();
+                    f1Chart.setOption({
+                        series: {
+                            data: result["data"]
+                        }
+                    });
+
+                    f2Chart.setOption({
+                        legend: {
+                            data: ['最小薪资', '最大薪资', '平均薪资']
+                        },
+                        xAxis: {
+                            data: f_keys
+                        },
+                        series: [
+                            {
+                                name: '最小薪资',
+                                type: 'bar',
+                                data: f_mins,
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                }
+                            },
+                            {
+                                name: '最大薪资',
+                                type: 'bar',
+                                data: f_maxs,
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                }
+                            },
+                            {
+                                name: '平均薪资',
+                                type: 'bar',
+                                data: f_avgs,
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                }
+                            }
+                        ]
+                    });
+                }
+            },
+            error: function (errorMsg) {
+                alert("数据获取失败，请与管理员联系!");
+                f1Chart.hideLoading();
+                f2Chart.hideLoading();
             }
         })
 

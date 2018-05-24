@@ -1,5 +1,4 @@
 import os
-from werkzeug.utils import secure_filename
 
 from flask import render_template, url_for, request, redirect, Response, current_app, flash
 from flask_classy import FlaskView, route

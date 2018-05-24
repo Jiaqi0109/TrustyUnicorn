@@ -45,14 +45,15 @@
 
     <div class="row">
         <div class="col-lg-8 col-md-8 col-sm-12 col-md-offset-2">
-            <form action="#" method="post" class="input-group">
+            <form action="{{ url_for('WESView:index') }}" method="post" class="input-group">
                 <div class="form-group">
                     <select id="city_option" name="city" class="form-control">
                         <option>全国</option>
                     </select>
                 </div>
                 <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">Go!</button>
+                    <button id="select_btn" class="btn btn-default" type="button">确定</button>
+                    <button class="btn btn-success" type="submit">提交/继续</button>
                 </span>
             </form><!-- /input-group -->
         </div><!-- /.col-lg-6 -->
@@ -351,6 +352,176 @@
             };
             httpPost('/wes/', params)
         });
+
+    </script>
+
+
+    <script type="text/javascript">
+
+        var sChart = echarts.init(document.getElementById('salary'));
+        var wChart = echarts.init(document.getElementById('workyear'));
+        var eChart = echarts.init(document.getElementById('education'));
+
+        var soption = {
+            title: {
+                subtext: 'data from lagou.com',
+                sublink: 'http://www.lagou.com',
+                left: 'center',
+                text: '薪资分布'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            xAxis: {
+                name: '薪资/元',
+                type: 'category',
+                data: []
+            },
+            yAxis: {
+                name: '职位数量',
+                type: 'value'
+            },
+            series: [{
+                name: '职位数量',
+                type: 'line',
+                data: [],
+                areaStyle: {},
+                smooth: true
+            }]
+        };
+        sChart.setOption(soption, 1);
+
+
+        var ewoption = {
+            title: {
+                subtext: 'data from lagou.com',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            legend: {
+                data: ['职位数量'],
+                left: 'left'
+            },
+            xAxis: {
+                type: 'category',
+                data: []
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    name: '职位数量',
+                    type: 'bar',
+                    data: []
+                }
+            ]
+        };
+        eChart.setOption(ewoption, 1);
+        wChart.setOption(ewoption, 1);
+
+        sChart.showLoading();
+        wChart.showLoading();
+        eChart.showLoading();
+
+        var btn = document.getElementById('select_btn');
+        btn.addEventListener('click', function (ev) {
+            var city = $('#city_option option:selected').val();
+            var salary = [];
+            var svalues = [];
+
+            var enames = [];
+            var enums = [];
+
+            var wnames = [];
+            var wnums = [];
+
+            $.ajax({
+                type: "post",
+                url: "/position/select_json/",
+                data: {"city": city},
+                dataType: 'json',
+                success: function (result) {
+
+                    for (var j = 0; j < result["salary_data"].length; j++) {
+                        key = (result["salary_data"][j]["name"]);
+                        num = (result["salary_data"][j]["value"]);
+                        salary.push(key);
+                        svalues.push(num);
+                    }
+                    for (var e = 0; e < result["education_data"].length; e++) {
+                        key = (result["education_data"][e]["name"]);
+                        num = (result["education_data"][e]["value"]);
+                        enames.push(key);
+                        enums.push(num);
+                    }
+                    for (var w = 0; w < result["workyear_data"].length; w++) {
+                        key = (result["workyear_data"][w]["name"]);
+                        num = (result["workyear_data"][w]["value"]);
+                        wnames.push(key);
+                        wnums.push(num);
+                    }
+
+
+                    sChart.hideLoading();
+                    wChart.hideLoading();
+                    eChart.hideLoading();
+
+                    sChart.setOption({
+                        series: {
+                            data: svalues
+                        },
+                        xAxis: {
+                            data: salary
+                        }
+                    });
+
+                    eChart.setOption({
+
+                        title: {
+                            text: '教育背景要求分布'
+                        },
+                        xAxis: {
+                            data: enames
+                        },
+                        series: {
+                            data: enums
+                        }
+                    });
+
+                    wChart.setOption({
+
+                        color: ['#3398DB'],
+                        title: {
+                            text: '工作经验要求分布'
+                        },
+                        xAxis: {
+                            data: wnames
+                        },
+                        series: {
+                            data: wnums
+                        }
+                    });
+
+                },
+                error: function (errorMsg) {
+                    alert("数据错误，请重新选择！");
+                }
+
+            })
+        });
+
 
     </script>
 

@@ -1,7 +1,8 @@
-from flask import render_template, url_for, request, redirect, Response, flash
+from flask import render_template, url_for, request, redirect, Response, flash, session
 from flask_classy import FlaskView, route
 from flask_login import login_user, logout_user, login_required, current_user
 
+from app.helpers import description_cy
 from app.models.position import Position
 from app.models.company import Company
 from app.models.user import User
@@ -10,6 +11,8 @@ from app.extensions import db
 from datetime import datetime
 
 import json
+from wordcloud import WordCloud
+from scipy.misc import imread
 
 
 class UserView(FlaskView):
@@ -94,6 +97,61 @@ class UserView(FlaskView):
                 positions.append(data)
         nums = len(positions)
         return render_template('user_center.html', positions=positions, nums=nums)
+
+    @login_required
+    @route('/change_info/', methods=['POST'])
+    def change_info(self):
+        new_password = request.form['new_password']
+        skills = request.form['skills']
+        user = User.query.get(current_user.id)
+        user.keywords = skills
+        if new_password:
+            user.password = new_password
+            flash('密码已修改，请牢记您的新密码。')
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('UserView:center'))
+
+
+    def skill_cy(self):
+        positions = []
+        descs = ''
+        pids = current_user.pids.split('-')
+        for pid in pids:
+            if pid:
+                position = Position.query.get(pid)
+                if position:
+                    positions.append(position)
+        for position in positions:
+            descs += position.description
+        wordclouds = description_cy(descs)
+
+        data = {}
+        for item in wordclouds:
+            data[item[0]] = item[1]
+
+        session['user_skill'] = data
+
+        color_mask = imread('./app/static/img/dear-r.png')
+        wc = WordCloud(
+            # 设置字体，不指定就会出现乱码
+            font_path="./app/static/fonts/wqy-microhei.ttc",
+            # font_path=path.join(d,'simsun.ttc'),
+            # 设置背景色
+            background_color='#f2f2f2',
+            # 词云形状
+            mask=color_mask,
+            # 允许最大词汇
+            max_words=10000,
+            # 最大号字体
+            max_font_size=100
+        )
+        word_cloud = wc.generate_from_frequencies(data)  # 产生词云
+        word_cloud.to_file("./app/static/cy_pic/user/" + str(current_user.id) + "_skill.jpg")  # 保存图片
+
+        return redirect(url_for('UserView:center'))
+
+
 
     @route('/jobs/<pid>')
     @login_required

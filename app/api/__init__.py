@@ -7,3 +7,4 @@ from .user import UserView
 from .wes import WESView
 from .result import ResultView
 from .company import CompanyView
+from .analysis import AnalysisView

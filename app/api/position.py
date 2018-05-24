@@ -1,10 +1,6 @@
 import json
 from flask import redirect, render_template, request, url_for, Response, session
 from flask_classy import FlaskView, route
-from sqlalchemy import func
-
-from app.extensions import db
-from app.models.position import Position
 
 from app.helpers import *
 
@@ -60,6 +56,35 @@ class PositionView(FlaskView):
             'ed': ed,
             'wd': wd
         }
+        content = json.dumps(datas)
+        resp = Response(content)
+        return resp
+
+    @route('/select_json/', methods=['POST'])
+    def select_json(self):
+        keyword = session.get('keyword')
+        city = request.form['city']
+
+        salaries = []
+        educations = []
+        workyears = []
+
+        positions = get_positions(keyword, city)
+
+        for position in positions:
+            salaries.append(position.salary)
+            educations.append(position.education)
+            workyears.append(position.workyear)
+
+        salary_data = salary_json(salaries)
+        education_data, workyear_data = education_workyear_json(educations, workyears)
+
+        datas = {
+            'salary_data': salary_data,
+            'education_data': education_data,
+            'workyear_data': workyear_data,
+        }
+
         content = json.dumps(datas)
         resp = Response(content)
         return resp

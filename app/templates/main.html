@@ -7,6 +7,10 @@
     <meta name="author" content="Dashboard">
     <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
 
+    {% block head %}
+
+    {% endblock %}
+
     <title>
         IT职业数据可视化分析系统 - 主页
     </title>
@@ -77,7 +81,7 @@
                 <!-- sidebar menu start-->
                 <ul class="sidebar-menu" id="nav-accordion">
 
-                    <p class="centered"><a href="profile.html"><img src="/static/main/img/ui-sam.jpg" class="img-circle"
+                    <p class="centered"><a href="{{ url_for('UserView:center') }}"><img src="/static/main/img/ui-sam.jpg" class="img-circle"
                                                                     width="60"></a></p>
                     <h5 class="centered">{{ current_user.name }}</h5>
 
@@ -92,37 +96,31 @@
                         <a href="{{ url_for('PositionView:index') }}">
                             <i class="fa fa-desktop"></i>
                             <span>心仪职位数据分析</span>
-                            {# TODO 计算出每个城市的平均薪资，得结论 #}
                         </a>
                     </li>
 
                     <li class="mt">
-                        <a href="#">
-                            <i class="fa fa-cogs"></i>
-                            <span>心仪城市数据分析</span>
-                            {# TODO 展示薪资分布情况，工作经验、教育背景分布情况 #}
-                        </a>
-                    </li>
-                    <li class="mt">
                         <a href="{{ url_for('WESView:index') }}">
                             <i class="fa fa-book"></i>
                             <span>工作经验/教育背景-薪资关系</span>
-                            {#TODO 不同工作经验的薪资分布折线图，放到一起比较#}
-                            {# TODO 在右上方展示已经选择的选项，可以重置 #}
                         </a>
                     </li>
                     <li class="mt">
                         <a href="{{ url_for('CompanyView:index') }}">
                             <i class="fa fa-tasks"></i>
                             <span>公司规模/发展阶段-薪资关系</span>
-                            {# TODO 询问是否要指定公司大小及阶段 #}
-                            {# TODO 选择合适的地方指定薪资 #}
+                        </a>
+                    </li>
+                    <li class="mt">
+                        <a href="{{ url_for('AnalysisView:index') }}">
+                            <i class="fa fa-cogs"></i>
+                            <span>分析结果</span>
                         </a>
                     </li>
                     <li class="mt">
                         <a href="{{ url_for('ResultView:index') }}">
                             <i class="fa fa-th"></i>
-                            <span>分析结果及职位推荐</span>
+                            <span>职位推荐</span>
                         </a>
                     </li>
                     <li class="mt">

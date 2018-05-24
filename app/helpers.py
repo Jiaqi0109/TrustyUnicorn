@@ -1,6 +1,40 @@
 import numpy as np
+import jieba
+import jieba.analyse
+import jieba.posseg as psg
 
+from app.models.company import Company
 from app.models.position import Position
+
+
+def description_cy(detail):
+    import re
+
+    lines = []
+    keyWords = ['精通', '熟悉', '掌握', '了解', '编写', '开发', '理解', '熟练', '能力', '维护', '负责', '参与', '作品']
+    details = detail.split('\n')
+    for d in details:
+        for key in keyWords:
+            if d.find(key) > -1:
+                number = re.compile(r'\d')
+                nums = number.findall(d)
+                if nums:
+                    for num in nums:
+                        index = d.index(num)
+                        if index == 0:
+                            if d[index + 1] == '年':
+                                continue
+                            else:
+                                d = d[1:]
+                d = d.strip().replace('经验', '').replace('语言', '').replace('技术', '').replace('能力', '').replace('团队', '').title()
+                lines.append(d)
+    detail = ' '.join(lines)
+    # seg_list = jieba.cut(detail, cut_all=True)
+    # print(", ".join(seg_list))
+    keywords = jieba.analyse.extract_tags(detail, topK=120, withWeight=True, allowPOS=('n', 'eng'))
+    # keywords = jieba.analyse.textrank(detail, topK=120, withWeight=True, allowPOS=('n', 'eng'))
+
+    return keywords
 
 
 def get_positions(keyword, city='全国', education='', workyear=''):

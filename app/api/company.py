@@ -7,7 +7,6 @@ from flask_login import current_user
 from app.models.position import Position
 from app.models.company import Company
 
-from wordcloud import WordCloud
 
 from app.helpers import *
 
@@ -17,12 +16,15 @@ class CompanyView(FlaskView):
     @route('/', methods=['GET', 'POST'])
     def index(self):
         if request.method == 'POST':
-            # TODO 存在多选的问题
             education = request.form['education']
             workyear = request.form['workyear']
             session['education'] = education
             session['workyear'] = workyear
-        return render_template('company.html')
+
+        keyword = session.get('keyword')
+        city = session.get('city')
+
+        return render_template('company.html', keyword=keyword, city=city)
 
 
     def finance_json(self):
@@ -32,7 +34,7 @@ class CompanyView(FlaskView):
         education = session.get('education')
         workyear = session.get('workyear')
 
-        positions = get_positions(keyword, city=city, education=education, workyear=workyear)
+        positions = get_positions(keyword=keyword, city=city, education=education, workyear=workyear)
 
         finances = []
         salaries = []
@@ -90,7 +92,7 @@ class CompanyView(FlaskView):
         for position in positions:
             company = Company.query.get(position.cid)
             if company:
-                com.append({'finance_stage': company.finance_stage, 'industry':company.industry, 'salary': position.salary})
+                com.append({'finance_stage': company.finance_stage, 'industry': company.industry, 'salary': position.salary})
 
         for p in com:
             _data = p['industry'].replace(' ', ',').replace('、', ',')
@@ -128,49 +130,3 @@ class CompanyView(FlaskView):
         resp = Response(content)
         return resp
 
-    # def cy_json(self):
-    #     wordcloud_list = []
-    #     com = session.get('com')
-    #     if com:
-    #         for p in com:
-    #             _data = p['industry'].replace(' ', ',').replace('、', ',')
-    #             for _c in _data.split(','):
-    #                 if _c:
-    #                     wordcloud_list.append(_c.strip())
-    #
-    #     n_list = np.array(wordcloud_list)
-    #     wl = list({w for w in wordcloud_list})
-    #     nums = [np.sum(n_list == c) for c in wl]
-    #
-    #     data = []
-    #     wdata = {}
-    #     for name, value in zip(wl, nums):
-    #         data.append({"name": name, "value": str(value)})
-    #         wdata[name] = value
-    #
-    #
-    #     # wordcloud
-    #     wc = WordCloud(
-    #         # 设置字体，不指定就会出现乱码
-    #         font_path="./app/static/fonts/wqy-microhei.ttc",
-    #         # font_path=path.join(d,'simsun.ttc'),
-    #         # 设置背景色
-    #         background_color='white',
-    #         # 词云形状
-    #         # mask=color_mask,
-    #         # 允许最大词汇
-    #         max_words=10000,
-    #         # 最大号字体
-    #         max_font_size=40
-    #     )
-    #     word_cloud = wc.generate_from_frequencies(wdata)  # 产生词云
-    #     word_cloud.to_file("./app/static/cy_pic/user/" + str(current_user.id) + "_company.jpg")  # 保存图片
-    #
-    #
-    #     datas = {
-    #         'data': data
-    #     }
-    #
-    #     content = json.dumps(datas)
-    #     resp = Response(content)
-    #     return resp
